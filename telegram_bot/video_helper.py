@@ -2,7 +2,7 @@ from yt_dlp import YoutubeDL
 import whisper
 import fpdf
 import os
-from helper import handle_new_file
+from chatbot_actual.helper import handle_new_file
 
 class PDF(fpdf.FPDF):
     def __init__(self):

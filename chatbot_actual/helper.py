@@ -1,5 +1,5 @@
-from llm import *
-from indexing import *
+from chatbot_actual.llm import *
+from chatbot_actual.indexing import *
 
 def retrieve_documents(vectorstore, query, k=5):
     return vectorstore.similarity_search_with_score(query, k=k)

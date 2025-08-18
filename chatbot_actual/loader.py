@@ -1,5 +1,5 @@
 import os
-from config import *
+from chatbot_actual.config import *
 from google.cloud import storage
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter

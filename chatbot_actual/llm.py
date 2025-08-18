@@ -1,5 +1,5 @@
-from prompts import *
-from config import *
+from chatbot_actual.prompts import *
+from chatbot_actual.config import *
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 from typing import Literal

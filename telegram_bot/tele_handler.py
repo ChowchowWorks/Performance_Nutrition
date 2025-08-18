@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request, BackgroundTasks
-from tele_helper import *
+from telegram_bot.tele_helper import *
 import json
 import httpx
-from config import TELEGRAM_BOT_TOKEN
+from chatbot_actual.config import TELEGRAM_BOT_TOKEN
 
 app = FastAPI()
 

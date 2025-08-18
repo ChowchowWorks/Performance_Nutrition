@@ -1,9 +1,9 @@
-from config import *
-from helper import handle_new_file
-from loader import upload_chroma_to_cloud
+from chatbot_actual.config import *
+from chatbot_actual.helper import handle_new_file
+from chatbot_actual.loader import upload_chroma_to_cloud
 from uuid import uuid4
 import httpx, aiofiles, os
-from video_helper import *
+from telegram_bot.video_helper import *
 
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 TELEGRAM_FILE_URL = f"https://api.telegram.org/file/bot{TELEGRAM_BOT_TOKEN}"

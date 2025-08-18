@@ -1,5 +1,5 @@
-from loader import *
-from config import *
+from chatbot_actual.loader import *
+from chatbot_actual.config import *
 
 from langchain_chroma import Chroma 
 from langchain_openai import OpenAIEmbeddings

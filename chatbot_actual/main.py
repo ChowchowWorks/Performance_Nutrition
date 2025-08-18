@@ -1,6 +1,6 @@
-from loader import download_chroma_from_r2
-from helper import rag_activation
-from config import *
+from chatbot_actual.loader import download_chroma_from_r2
+from chatbot_actual.helper import rag_activation
+from chatbot_actual.config import *
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
