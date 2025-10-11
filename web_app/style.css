@@ -12,14 +12,16 @@
 }
 
 .navbar{
-    width: 1200px;
-    height: 75px;
+    width: 1700px;
+    height: 90px;
     margin: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .icon{
     width: 600px;
-    float: left;
     height: 100px;
 }
 
@@ -28,4 +30,108 @@
     font-size: 50px;
     font-family: Cambria;
     padding-left: 50px;
+    float: left;
+    padding-top: 10px;
+}
+
+.menu{
+    width: 600px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+ul{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ul li{
+    list-style: none;
+    margin-right: 62px;
+    margin-top: 25px;
+    font-size: 30px;
+}
+
+ul li a{
+    text-decoration: none;
+    color: #4682B4;
+    font-family: Cambria;
+    font-weight: bold;
+    transition: 0.4s ease-in-out;
+}
+
+ul li a:hover{
+    color: black;
+}
+
+.form{
+    width: 250px;
+    height: 350px;
+    background: linear-gradient(linear-gradient(to top, rgba(0,0,0,0) 100%, rgba(0,0,0,0) 100%));
+    position: absolute;
+    top: 450px;
+    left: 870px;
+    border-radius: 10px;
+    padding: 25px;
+}   
+
+.form h2{
+    width: 220px;
+    font-family: Cambria;
+    text-align: center;
+    color: #4682B4;
+    font-size: 22px;
+    background-color: aliceblue;
+    border-radius: 10px;
+    margin: 2px;
+    padding: 8px;
+}
+
+.form input{
+    width: 240px;
+    height: 35px;
+    background: transparent;
+    border-bottom: 1px solid #4682B4;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    color: black;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    font-family: Cambria;
+}
+
+.form input :focus{
+    outline: none;
+}
+
+::placeholder{
+    color: steelblue;
+    font-family: Cambria;
+}
+
+.btn{
+    width: 240px;
+    height: 40px;
+    background-color: steelblue;
+    border: none;
+    margin-top: 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    color:aliceblue;
+    transition: 0.4s ease;
+}
+
+.btn :hover{
+    background: aliceblue;
+    color: steelblue;
+}
+
+.btn a{
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
 }
