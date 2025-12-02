@@ -1,0 +1,33 @@
+# Ignore everything
+*
+
+# But allow these specific files
+!.gitignore
+!package.json
+!README.md
+
+# Allow public directory and specific files
+!public/
+!public/index.html
+!public/manifest.json
+
+# Allow src directory and specific files
+!src/
+!src/App.js
+!src/App.css
+!src/index.js
+!src/index.css
+
+# Allow components directory and files
+!src/components/
+!src/components/Header.js
+!src/components/Footer.js
+
+# Allow pages directory and files
+!src/pages/
+!src/pages/Home.js
+!src/pages/About.js
+!src/pages/Contact.js
+!src/pages/Testimonials.js
+!src/pages/Membership.js
+!src/pages/MemberLogin.js
