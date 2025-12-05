@@ -28,21 +28,71 @@ function MemberLogin() {
     });
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login submitted:', formData);
-    alert('Login functionality will be implemented with backend integration.');
+
+    try {
+      const response = await fetch("https://client-auth-api.clarencechow.workers.dev/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: formData.email, password: formData.password })
+      });
+
+      const text = await response.text(); 
+
+      if (!response.ok) {
+        alert(text); // shows "Invalid username or password"
+      } else {
+        alert("Login success: " + text); // shows "Welcome username!"
+        // TODO: redirect to dashboard page here
+        // e.g., window.location.href = "/dashboard";
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to connect to API");
+    }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
+
+    // check password match
     if (registerData.password !== registerData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Registration submitted:', registerData);
-    alert('Registration functionality will be implemented with backend integration.');
+
+    try {
+      const response = await fetch(
+        "https://client-auth-api.clarencechow.workers.dev/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: registerData.name,
+            email: registerData.email,
+            password: registerData.password
+          })
+        }
+      );
+
+      const text = await response.text(); // read response once
+
+      if (!response.ok) {
+        alert("Signup failed: " + text);
+      } else {
+        alert("Signup successful: " + text);
+        // Optional: switch to login form after successful signup
+        setIsRegistering(false);
+        // Optionally clear form
+        setRegisterData({ name: "", email: "", password: "", confirmPassword: "" });
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to connect to API");
+    }
   };
+
 
   return (
     <div className="page">
