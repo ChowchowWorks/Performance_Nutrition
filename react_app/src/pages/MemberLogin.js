@@ -35,7 +35,7 @@ function MemberLogin() {
       const response = await fetch("https://client-auth-api.clarencechow.workers.dev/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: formData.email, password: formData.password })
+        body: JSON.stringify({ email: formData.email, password: formData.password })
       });
 
       const text = await response.text(); 
