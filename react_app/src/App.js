@@ -4,8 +4,10 @@ import './App.css';
 
 // Layouts
 import PublicLayout from './components/layout/PublicLayout';
+{/*
 import PortalLayout from './components/layout/PortalLayout';
-import RequireAuth from './components/auth/RequireAuth';
+import RequireAuth from './components/auth/requireauth';
+*/}
 
 // Public pages
 import Home from './pages/Home';
