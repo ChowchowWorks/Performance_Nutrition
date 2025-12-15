@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 function MemberLogin() {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -44,8 +49,8 @@ function MemberLogin() {
         alert(text); // shows "Invalid username or password"
       } else {
         alert("Login success: " + text); // shows "Welcome username!"
-        // TODO: redirect to dashboard page here
-        // e.g., window.location.href = "/dashboard";
+        localStorage.setItem("token", "loggedin"); // you can use actual JWT if your backend provides one
+        navigate("/portal/AIcoach");
       }
     } catch (err) {
       console.error(err);
