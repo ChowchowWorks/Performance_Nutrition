@@ -1,0 +1,50 @@
+/* Sidebar styling */
+.sidebar {
+  position: fixed;       /* keep sidebar fixed */
+  top: 60px;             /* start below navbar (navbar height) */
+  left: 0;               /* stick to left edge */
+  width: 220px;
+  height: calc(100vh - 60px); /* full height minus navbar */
+  background-color: #f4f4f4;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;   /* stack items vertically */
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.Nav-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: left;
+  color: black;
+}
+
+/* Navigation links stacked vertically */
+.nav-links {
+  display: flex;
+  flex-direction: column;       /* vertical stack */
+  gap: 15px;                    /* spacing between links */
+  width: 100%;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 5px;
+  display: block;               /* force links to block so they stack */
+}
+
+.nav-links a:hover {
+  background-color: grey;
+  color: white;
+}
+
+.nav-links a.active-link {
+  background-color: forestgreen;
+  color: white;
+}

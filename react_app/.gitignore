@@ -19,12 +19,8 @@
 !src/index.css
 
 # Allow components directory and files
-!src/components/*
-!src/components/Header.js
-!src/components/Footer.js
-!src/components/auth/
-!src/components/charts/
-!src/components/layout/
+!src/components/
+!src/components/**/*
 
 # Allow pages directory and files
 !src/pages/
