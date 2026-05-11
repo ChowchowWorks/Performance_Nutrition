@@ -1,0 +1,94 @@
+.coachContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.PageHead {
+  padding: 10px 20px;
+}
+
+.mainCoach {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  padding: 20px;
+  gap: 10px;
+}
+
+.chatWindow {
+  flex: 1;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  left: calc(50% + 100px);
+  width: 1200px;
+  margin-bottom: 100px;
+  margin-left: 125px;
+}
+
+.userBubble {
+  align-self: flex-end;
+  background: #DCF8C6;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 80%;
+}
+
+.botBubble {
+  align-self: flex-start;
+  background: #eeeeee;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 80%;
+}
+
+/* ---- ChatGPT-style bottom input bar ---- */
+.inputBar {
+  position: fixed;
+  bottom: 20px;
+  left: calc(50% + 100px);
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 60%;              /* Not full width */
+  max-width: 700px;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 20px;
+  box-shadow: 0px 3px 12px rgba(0,0,0,0.12);
+}
+
+/* ---- Input field ---- */
+.chatInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+/* ---- Send button ---- */
+.sendButton {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.sendButton:hover {
+  background: #3b7ac3;
+}
