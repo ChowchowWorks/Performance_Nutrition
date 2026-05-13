@@ -18,6 +18,7 @@ import MemberLogin from './pages/MemberLogin';
 // Membership portal pages
 import Coach from './pages/Portal/AICoach';
 import Appointment from './pages/Portal/Appointments';
+import DataInput from './pages/Portal/DataInput';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route element={<PortalLayout />}>
             <Route path="/portal/AIcoach" element={<Coach />} />
             <Route path="/portal/Appointments" element={<Appointment />} />
+            <Route path="/portal/DataInput" element = {<DataInput />} />
           </Route>
         </Route>
 
