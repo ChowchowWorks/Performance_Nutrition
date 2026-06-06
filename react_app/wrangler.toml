@@ -1,0 +1,7 @@
+name = "performance_nutrition"
+compatibility_date = "2026-05-20"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cilents_db"
+database_id = "77afb077-570b-4354-b7c3-f2bc4cef813d"

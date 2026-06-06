@@ -26,6 +26,6 @@ body {
 
   display: flex;
   flex-direction: column;         /* stack pages vertically */
-  align-items: flex-start;        /* align to left */
+  align-items: stretch;        /* align to left */
   /* no justify-content: center */
 }
