@@ -1,0 +1,108 @@
+.AppointmentsPage {
+  margin-left: 240px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+.AppointmentInstructions {
+  text-align: left;         /* flush text to the left */
+  line-height: 1.2;         /* controls spacing between lines; default is ~1.5 */
+  margin-left: 240px;     /* optional vertical spacing around the box */
+  margin-top: 50px;            /* optional padding inside the box */
+}
+
+/* Client Requirements Card */
+.ClientNeeds {
+  width: 80%;
+  max-width: 800px;
+  background-color: #f9f9f9;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.needsHeader {
+  font-size: 1.2rem;
+  margin-top: 5px;
+  color: #333;
+}
+
+.needs {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+  color: #555;
+}
+
+/* Calendar & Timeslot Container */
+.slotSelector {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  flex-wrap: wrap; /* wrap on smaller screens */
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Calendar Box */
+.Calendar {
+  width: 600px;
+  max-width: 100%;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.customCalendar {
+  width: 100%;
+  font-size: large;
+}
+
+.customCalendar .p-datepicker-calendar {
+  background-color: #fff;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.TimeSlot {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-width: 250px;
+}
+
+/* Appointment Dropdown */
+.desiredAppointment {
+  width: 80%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desiredAppointment select {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.desiredAppointment select:focus {
+  border-color: #0077ff;
+  box-shadow: 0 0 5px rgba(0,119,255,0.3);
+}
+
+.submitAppointment{
+  background-color: crimson;
+  color: white;
+}

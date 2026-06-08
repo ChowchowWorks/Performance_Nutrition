@@ -1,0 +1,31 @@
+/* General page layout */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* Utility classes (optional) */
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.AppContent {
+  margin-left: 220px;             /* space for sidebar */
+  padding-top: 60px;              /* space for navbar */
+  width: calc(100% - 220px);
+  min-height: calc(100vh - 60px);
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;         /* stack pages vertically */
+  align-items: stretch;        /* align to left */
+  /* no justify-content: center */
+}
