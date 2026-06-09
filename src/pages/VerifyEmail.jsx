@@ -83,7 +83,7 @@ function VerifyEmail() {
 
   const goToLogin = async () => {
     await signOut(auth);
-    navigate("/member-login");
+    navigate("/login");
   };
 
   return (

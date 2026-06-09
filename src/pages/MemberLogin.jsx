@@ -21,6 +21,7 @@ function MemberLogin() {
   });
 
   const [isRegistering, setIsRegistering] = useState(false);
+  const [registeredGoogle, setRegisteredGoogle] = useState(false);
   const [registerData, setRegisterData] = useState({
     name: '',
     email: '',
@@ -59,10 +60,21 @@ function MemberLogin() {
         navigate(`/verify-email?email=${encodeURIComponent(user.email)}`);
         return;
       }
+
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          emailVerified: true,
+          lastLoginAt: serverTimestamp()
+        },
+        { merge: true }
+      );
+
       const token = await user.getIdToken();
 
       localStorage.setItem("token", token);
       localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("loginTime", Date.now().toString());
 
       alert("Login successful!");
       navigate("/portal/AIcoach");
@@ -103,6 +115,7 @@ function MemberLogin() {
         doc(db, 'users', user.uid), {
           uid: user.uid,
           email: user.email,
+          emailVerified: user.emailVerified,
           username: registerData.name,
           displayName: registerData.name,
           createdAt: serverTimestamp()
@@ -138,6 +151,44 @@ function MemberLogin() {
     }
   };
 
+  // TODO: Case where account already created same for handleRegisterSubmit
+  const handleGoogleRegister = async() => {
+    try {
+      const provider = new GoogleAuthProvider();
+
+      const result = await signInWithPopup(auth, provider);
+
+      const user = result.user;
+      const token = await user.getIdToken();
+
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          uid: user.uid,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          displayName: user.displayName,
+          username: user.displayName,
+          photoURL: user.photoURL,
+          updatedAt: serverTimestamp()
+        }, { merge: true }
+      )
+
+      setRegisteredGoogle(true);
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("loginTime", Date.now().toString());
+
+      setTimeout(() => {
+        navigate("/portal/AIcoach");
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      alert("Google login failed");
+    }
+  };
+
   const handleGoogleLogin = async() => {
     try {
       const provider = new GoogleAuthProvider();
@@ -152,6 +203,7 @@ function MemberLogin() {
         {
           uid: user.uid,
           email: user.email,
+          emailVerified: user.emailVerified,
           displayName: user.displayName,
           username: user.displayName,
           photoURL: user.photoURL,
@@ -161,6 +213,7 @@ function MemberLogin() {
 
       localStorage.setItem("token", token);
       localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("loginTime", Date.now().toString());
 
       navigate("/portal/AIcoach");
     } catch (err) {
@@ -324,9 +377,19 @@ function MemberLogin() {
               <form onSubmit={handleRegisterSubmit}>
                 <h2>Create Account</h2>
 
-                                <button 
+                {registeredGoogle && 
+                  <div style={{ marginBottom: '1.5rem' , width: '100%', color: 'white',
+                    padding: '0.75rem', backgroundColor: '#047857', fontWeight: 'bold',
+                    borderRadius: '4px', alignItems: 'center', justifyContent: 'center',
+                    display: 'flex'
+                  }}>
+                    Account created successfully! Logging in... 
+                  </div>
+                }
+
+                <button 
                   type = "button"
-                  onClick = {handleGoogleLogin}
+                  onClick = {handleGoogleRegister}
                   style = {{
                     width: '100%',
                     padding: '0.75rem',
