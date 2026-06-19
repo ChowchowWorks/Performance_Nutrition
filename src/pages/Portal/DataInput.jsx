@@ -1,5 +1,7 @@
 import React , { useState, useEffect } from "react";
 import './DataInput.css';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 // Main Data Input Component 
 const DataInput = () => {
@@ -11,7 +13,7 @@ const DataInput = () => {
 
     const [calorieCount, setCalorieCount] = useState("");
     const [mealType, setMealType] = useState("Breakfast");
-    const [exerciseType, setExerciseType] = useState("Outdoor Run");
+    const [exerciseType, setExerciseType] = useState("");
 
     const saveExercise = () => {
         const data = {
@@ -32,13 +34,25 @@ const DataInput = () => {
 
     const [exerciseTypes, setExerciseTypes] = useState([]);
     
-    // hardcoded, need to replace with cloudfare api
     useEffect(() => {
-        fetch("/api/exercise-types")
-        .then((res) => res.json())
-        .then((data) => setExerciseTypes(data))
-        .catch((err) => console.error(err));
-    }, []); 
+        const getExerciseTypes = async () => {
+        try {
+            const coll = collection(db, "exercise-types");
+            const collSnap = await getDocs(coll);
+
+            const types = collSnap.docs.map(doc => doc.data().name);
+
+            setExerciseTypes(types); 
+
+            if (types.length > 0) {
+                setExerciseType(types[0]);
+            }
+        } catch (error) {
+            console.error("Error fetching exercise types:", error);
+        }};
+
+        getExerciseTypes();
+    }, []);
 
     const currentDate = new Date().toLocaleDateString("en-GB", {
         year: "numeric",
@@ -86,8 +100,8 @@ const DataInput = () => {
                                 <label>Exercise Type</label>
                                 <select value={exerciseType} onChange={(e) => setExerciseType(e.target.value)}>
                                     {exerciseTypes.map((t) => (
-                                        <option key={t.id} value={t.name}>
-                                            {t.name}
+                                        <option key={t} value={t}>
+                                            {t}
                                         </option>
                                     ))}
                                 </select>

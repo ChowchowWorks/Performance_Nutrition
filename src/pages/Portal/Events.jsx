@@ -1,2 +1,9 @@
+import React, { useState } from "react";
 
-export default upcomingEvents;
+const Events = () => {
+    return (
+        <p> Events page! </p>
+    )
+};
+
+export default Events;

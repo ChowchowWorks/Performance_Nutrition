@@ -30,9 +30,9 @@ function ForgotPassword() {
                     <h1> Reset Your Password </h1>
                     {!emailSent ? (
                         <>
-                            <h3> 
+                            <p> 
                                 Enter your email below to reset your password. 
-                            </h3>
+                            </p>
                             <form onSubmit = {handleSubmit}>
                                 <input 
                                     type = "email"
@@ -64,13 +64,13 @@ function ForgotPassword() {
                         </>
                     ) : (
                         <>
-                            <h3> 
+                            <p> 
                                 Reset email successfully sent! Please check your inbox / spam folder. 
-                            </h3>
+                            </p>
 
-                            <h3>
+                            <p>
                                 Do allow up to 5 minutes for the email to be sent. 
-                            </h3>
+                            </p>
                         </>
                     )} 
                 </div>

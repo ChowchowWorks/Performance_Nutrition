@@ -1,0 +1,23 @@
+.DashboardPage {
+  min-height: calc(100vh - 60px);
+  padding: 40px;
+  background-color: #fff9f3;
+  box-sizing: border-box;
+  font-family: 'Hammersmith One', sans-serif;
+}
+
+.fc-daygrid-day-number {
+    padding-left: 28px;
+}
+
+.headerRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pageName {
+  color: black;
+  font-size: 45px;
+}

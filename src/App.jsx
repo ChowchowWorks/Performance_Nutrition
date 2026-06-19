@@ -18,8 +18,10 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 
 // Membership portal pages
+import Dashboard from './pages/Portal/Dashboard';
 import Coach from './pages/Portal/AICoach';
 import Appointment from './pages/Portal/Appointments';
+import Events from './pages/Portal/Events';
 import DataInput from './pages/Portal/DataInput';
 
 function App() {
@@ -42,8 +44,10 @@ function App() {
         {/* MEMBER PORTAL (requires login) */}
         <Route element={<RequireAuth />}>
           <Route element={<PortalLayout />}>
+            <Route path="/portal/Dashboard" element={<Dashboard />} />
             <Route path="/portal/AIcoach" element={<Coach />} />
             <Route path="/portal/Appointments" element={<Appointment />} />
+            <Route path="/portal/Events" element={<Events />} />
             <Route path="/portal/DataInput" element = {<DataInput />} />
           </Route>
         </Route>
