@@ -183,6 +183,7 @@ function MemberLogin() {
       setTimeout(() => {
         navigate("/portal/AIcoach");
       }, 2000);
+      
     } catch (err) {
       console.error(err);
       alert("Google login failed");

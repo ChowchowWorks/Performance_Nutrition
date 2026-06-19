@@ -23,30 +23,71 @@
   color: black;
 }
 
+.userProfile {
+  position: relative;
+}
+
 /* Profile container */
 .profileContainer {
   display: flex;
   align-items: center;
   gap: 8px;
-}
 
-.profileTab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.5rem;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+
   font-weight: bold;
+  font-size: 1.25rem;
   color: black;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  transition: background-color 0.2s, color 0.2s;
+
+  cursor: pointer;
 }
 
-.profileTab:hover {
+.profileContainer:hover {
   color: grey;
 }
 
-.profileIcon {
-  color: black;
+.profileImage {
+  width: 36px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-container {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0px;
+  z-index: 200;
+}
+
+.dropdown-menu {
+    width: 200px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.dropdown-menu a, .dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+
+  background: none;
+  border: none;
+  outline: none;
+
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dropdown-menu a:hover, .dropdown-menu button:hover {
+  background-color: #f4f4f4;
 }
