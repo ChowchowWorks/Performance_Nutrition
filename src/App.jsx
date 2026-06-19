@@ -15,6 +15,7 @@ import Membership from './pages/Membership';
 import Contact from './pages/Contact';
 import MemberLogin from './pages/MemberLogin';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
 
 // Membership portal pages
 import Coach from './pages/Portal/AICoach';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<MemberLogin />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/password-reset" element = {<ForgotPassword />} />
         </Route>
 
         {/* MEMBER PORTAL (requires login) */}

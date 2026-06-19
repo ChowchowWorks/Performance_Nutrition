@@ -14,6 +14,8 @@ function VerifyEmail() {
   const [currentUser, setCurrentUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [verifyButtonHover, setVerifyButtonHover] = useState(false);
+  const [backButtonHover, setBackButtonHover] = useState(false);
   const [cooldown, setCooldown] = useState(20);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -89,7 +91,7 @@ function VerifyEmail() {
   return (
     <div className="page">
       <div className="container">
-        <div className="card" style={{ maxWidth: "420px", margin: "60px auto", textAlign: "center" }}>
+        <div className="card" style={{ maxWidth: "500px", margin: "60px auto", textAlign: "center" }}>
           <h1>Verify your email</h1>
 
           {email && (
@@ -98,17 +100,31 @@ function VerifyEmail() {
             </p>
           )}
 
-          <p>Please click the link in your inbox. Once verified, you can continue into the app.</p>
+          <p>Please click the link in your inbox. </p>
+          <p>Once verified, you can continue into the app.</p>
 
           {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
           {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
           <button
             type="button"
-            className="btn"
             onClick={resendVerificationEmail}
-            disabled={loading || initializing || !currentUser || cooldown > 0}
-            style={{ width: "100%", marginTop: "1rem" }}
+            onMouseEnter = {() => setVerifyButtonHover(true)}
+            onMouseLeave = {() => setVerifyButtonHover(false)}
+            disabled = {loading || initializing || !currentUser || cooldown > 0}
+            style = {{ 
+              width: "100%", 
+              height: '40px',
+              marginTop: "1rem", 
+              borderRadius: '10px',  
+              fontSize: '1rem', 
+              fontWeight: 'bold', 
+              color: 'white',
+              backgroundColor: verifyButtonHover ? '#3f4b5e' : '#2c3544',
+              cursor: 'pointer', 
+              border: 'none', 
+              transition: 'background-color 0.2s ease'
+            }}
           >
             {initializing
               ? "Checking session..."
@@ -122,7 +138,21 @@ function VerifyEmail() {
           <button
             type="button"
             onClick={goToLogin}
-            style={{ width: "100%", marginTop: "1rem" }}
+            onMouseEnter = {() => setBackButtonHover(true)}
+            onMouseLeave = {() => setBackButtonHover(false)}
+            style = {{ 
+              width: "100%", 
+              height: '40px',
+              marginTop: "1rem", 
+              borderRadius: '10px',  
+              fontSize: '1rem', 
+              fontWeight: 'bold', 
+              color: 'white',
+              backgroundColor: backButtonHover ? 'gray' : 'rgba(0, 0, 0, 0.8)',
+              cursor: 'pointer', 
+              border: 'none', 
+              transition: 'background-color 0.2s ease'
+            }}
           >
             Back to login
           </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import {
@@ -183,7 +183,7 @@ function MemberLogin() {
       setTimeout(() => {
         navigate("/portal/AIcoach");
       }, 2000);
-      
+
     } catch (err) {
       console.error(err);
       alert("Google login failed");
@@ -369,9 +369,13 @@ function MemberLogin() {
                 </button>
 
                 <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                  <a href="#" style={{ color: '#3d4d5c', textDecoration: 'none' }}>
+                  <Link 
+                    to="/password-reset" 
+                    className={location.pathname === '/password-reset' ? 'active' : ''}
+                    style={{ color: '#3d4d5c', textDecoration: 'none' }}
+                  >
                     Forgot Password?
-                  </a>
+                  </Link>
                 </div>
               </form>
             ) : (
