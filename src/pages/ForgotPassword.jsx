@@ -63,10 +63,15 @@ function ForgotPassword() {
                             </form>
                         </>
                     ) : (
-                        <h2> 
-                            Reset email successfully sent! Please check your inbox / spam folder. 
-                            Do allow up to 5 minutes for the email to be sent. 
-                        </h2>
+                        <>
+                            <h3> 
+                                Reset email successfully sent! Please check your inbox / spam folder. 
+                            </h3>
+
+                            <h3>
+                                Do allow up to 5 minutes for the email to be sent. 
+                            </h3>
+                        </>
                     )} 
                 </div>
             </div>
