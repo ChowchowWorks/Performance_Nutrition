@@ -1,0 +1,37 @@
+.workoutSection {
+    margin-top: 40px;
+}
+
+.workoutCarousel {
+    display: flex;
+
+    gap: 20px;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    padding: 10px 0 15px 0;
+
+    scroll-behavior: smooth;
+}
+
+/* Optional scrollbar styling */
+
+.workoutCarousel::-webkit-scrollbar {
+    height: 8px;
+}
+
+.workoutCarousel::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 10px;
+}
+
+.workoutCarousel::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 10px;
+}
+
+.workoutCarousel::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}

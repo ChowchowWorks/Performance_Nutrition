@@ -1,0 +1,12 @@
+.chartCard{
+
+    background:white;
+
+    margin-top:30px;
+
+    padding:20px;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
