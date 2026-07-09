@@ -1,0 +1,46 @@
+.nutritionSection{
+
+    margin-top:40px;
+}
+
+.nutritionCard{
+
+    background:white;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+.nutritionHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+}
+
+.nutritionBar{
+
+    height:12px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.nutritionFill{
+
+    height:100%;
+
+    background:#10b981;
+
+    border-radius:20px;
+}

@@ -1,0 +1,36 @@
+.workoutCard {
+    min-width: 230px;
+    flex-shrink: 0;
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+    transition: transform 0.2s ease;
+}
+
+.workoutCard:hover {
+    transform: translateY(-3px);
+}
+
+.workoutTitle {
+    margin: 0 0 15px 0;
+
+    color: #047857;
+
+    font-size: 1.2rem;
+
+    font-weight: bold;
+}
+
+.workoutInfo p {
+    margin: 8px 0;
+
+    color: #444;
+
+    font-size: 0.95rem;
+}

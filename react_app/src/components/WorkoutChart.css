@@ -1,0 +1,17 @@
+.chartCard {
+    background: white;
+
+    margin-top: 40px;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.chartCard h2 {
+    margin-bottom: 20px;
+
+    color: #111827;
+}

@@ -1,0 +1,63 @@
+.summaryGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+    margin-top:25px;
+}
+
+.summaryCard{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:20px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+
+    transition:.2s;
+}
+
+.summaryCard:hover{
+
+    transform:translateY(-3px);
+}
+
+.summaryHeader{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:1.1rem;
+
+    margin-bottom:15px;
+}
+
+.progressBar{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:15px;
+}
+
+.progressFill{
+
+    height:100%;
+
+    background:#10b981;
+
+    border-radius:20px;
+}
