@@ -1,50 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&display=swap');
+
 /* Sidebar styling */
 .sidebar {
-  position: fixed;       /* keep sidebar fixed */
-  top: 60px;             /* start below navbar (navbar height) */
-  left: 0;               /* stick to left edge */
+  position: fixed;
+  top: 60px;
+  left: 0;
   width: 220px;
-  height: calc(100vh - 60px); /* full height minus navbar */
-  background-color: #2c3544;
-  padding: 20px;
-
-  display: flex;
-  flex-direction: column;   /* stack items vertically */
-  align-items: flex-start;
+  height: calc(100vh - 60px);
+  padding: 24px 16px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  background: linear-gradient(180deg, #fffdfb 0%, #fff3e8 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 8px 0 28px rgba(15, 23, 42, 0.07);
+  overflow-y: auto;
+  font-family: 'Hammersmith One', sans-serif;
+}
+
+.sidebar::before {
+  content: "Portal Navigation";
+  display: block;
+  color: #08204d;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 2px 8px 0;
+  opacity: 0.75;
 }
 
 .Nav-header {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 5px;
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin: 0 8px 10px;
   text-align: left;
-  color: white;
+  color: #08204d;
+  line-height: 1.1;
 }
 
 /* Navigation links stacked vertically */
 .nav-links {
   display: flex;
-  flex-direction: column;       /* vertical stack */
-  gap: 15px;                    /* spacing between links */
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: white;
-  font-weight: 500;
-  padding: 4px 12px;
-  border-radius: 5px;
-  display: block;               /* force links to block so they stack */
+  color: #2f3747;
+  font-weight: 400;
+  font-size: 1.05rem;
+  padding: 14px 14px;
+  border-radius: 14px;
+  display: block;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(8, 32, 77, 0.08);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-links a:hover {
-  background-color: grey;
-  color: white;
+  background: #fff3e9;
+  color: #08204d;
+  transform: translateX(2px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.09);
 }
 
 .nav-links a.active-link {
-  background-color: forestgreen;
+  background: linear-gradient(135deg, #e2834b, #d16323);
   color: white;
+  box-shadow: 0 10px 20px rgba(226, 131, 75, 0.28);
+  transform: translateX(2px);
+}
+
+.nav-links a:focus-visible {
+  outline: 3px solid rgba(226, 131, 75, 0.22);
+  outline-offset: 2px;
 }

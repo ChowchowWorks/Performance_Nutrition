@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -77,7 +77,7 @@ function MemberLogin() {
       localStorage.setItem("loginTime", Date.now().toString());
 
       alert("Login successful!");
-      navigate("/portal/AIcoach");
+      navigate("/portal/Dashboard");
     } catch (err) {
       if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
         alert("Invalid email or password");
@@ -181,7 +181,7 @@ function MemberLogin() {
       localStorage.setItem("loginTime", Date.now().toString());
 
       setTimeout(() => {
-        navigate("/portal/AIcoach");
+        navigate("/portal/Dashboard");
       }, 2000);
 
     } catch (err) {
@@ -216,7 +216,7 @@ function MemberLogin() {
       localStorage.setItem("userEmail", user.email);
       localStorage.setItem("loginTime", Date.now().toString());
 
-      navigate("/portal/AIcoach");
+      navigate("/portal/Dashboard");
     } catch (err) {
       console.error(err);
       alert("Google login failed");

@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
 // Layouts
@@ -44,6 +43,7 @@ function App() {
         {/* MEMBER PORTAL (requires login) */}
         <Route element={<RequireAuth />}>
           <Route element={<PortalLayout />}>
+            <Route path="/portal" element={<Navigate to="/portal/Dashboard" replace />} />
             <Route path="/portal/Dashboard" element={<Dashboard />} />
             <Route path="/portal/AIcoach" element={<Coach />} />
             <Route path="/portal/Appointments" element={<Appointment />} />

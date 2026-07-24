@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import './navbar.css';
@@ -92,7 +92,10 @@ const Navbar = () => {
     <div className="navbarContainer">
       {/* Company Logo */}
       <NavLink to="/portal/Dashboard" className="CompanyLogo">
-        <h1>Performance Nutrition</h1>
+        <div className="brandMark">
+          <span className="brandKicker">Portal</span>
+          <h1>Performance Nutrition</h1>
+        </div>
       </NavLink>
 
       {/* Profile tab */}
@@ -100,12 +103,13 @@ const Navbar = () => {
       <div className="userProfile" ref = {profileRef}>
         <button className="profileContainer" onClick = {toggleProfile}>
           {profilePic ? (
-            <img src={profilePic} alt="Profile" class = "profileImage"/>
+            <img src={profilePic} alt="Profile" className="profileImage"/>
           ) : (
             <FaUserCircle className="profileIcon" />
           )}
 
-          {userName}     ▾
+          <span className="profileName">{userName}</span>
+          <span className="profileCaret">▾</span>
         </button>
         
         {isProfileOpen && 
