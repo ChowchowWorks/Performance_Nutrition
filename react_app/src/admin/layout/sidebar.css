@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Hammersmith+One&display=swap');
+
+.adminSidebar.sidebar::before {
+  content: "Admin Navigation";
+}
+
+.adminSidebar .Nav-header {
+  color: #4a3d7a;
+}
+
+.adminSidebar .nav-links a.active-link {
+  background: linear-gradient(135deg, #7b4cff, #5930c2);
+}
