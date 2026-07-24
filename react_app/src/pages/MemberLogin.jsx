@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -10,6 +10,19 @@ import {
   signInWithPopup,
   sendEmailVerification
 } from 'firebase/auth';
+
+// TEMP DEV BYPASS:
+// Replace this hardcoded email check with a Firestore/SQL role lookup once
+// admin users are stored in the database and login logic is finalized.
+const ADMIN_EMAIL = 'clarencechow@performancenutrition.sg';
+
+const getPostLoginRoute = (email) => {
+  if ((email || '').toLowerCase() === ADMIN_EMAIL) {
+    return '/admin';
+  }
+
+  return '/portal/Dashboard';
+};
 
 function MemberLogin() {
 
@@ -77,7 +90,7 @@ function MemberLogin() {
       localStorage.setItem("loginTime", Date.now().toString());
 
       alert("Login successful!");
-      navigate("/portal/AIcoach");
+      navigate(getPostLoginRoute(user.email), { replace: true });
     } catch (err) {
       if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
         alert("Invalid email or password");
@@ -181,7 +194,7 @@ function MemberLogin() {
       localStorage.setItem("loginTime", Date.now().toString());
 
       setTimeout(() => {
-        navigate("/portal/AIcoach");
+        navigate(getPostLoginRoute(user.email), { replace: true });
       }, 2000);
 
     } catch (err) {
@@ -216,7 +229,7 @@ function MemberLogin() {
       localStorage.setItem("userEmail", user.email);
       localStorage.setItem("loginTime", Date.now().toString());
 
-      navigate("/portal/AIcoach");
+      navigate(getPostLoginRoute(user.email), { replace: true });
     } catch (err) {
       console.error(err);
       alert("Google login failed");

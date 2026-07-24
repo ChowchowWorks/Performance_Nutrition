@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import './Dashboard.css';
@@ -10,7 +10,7 @@ import WorkoutCarousel from "../../components/WorkoutCarousel";
 import WorkoutChart from "../../components/WorkoutChart";
 
 const Dashboard = () => {
-    const [activeTab, setActiveTab] = useState("calendar");
+    const [activeTab, setActiveTab] = useState("stats");
 
     const exerciseDateList = [
     { date: "2026-06-03", type: "Running", duration: 30 },
@@ -238,14 +238,14 @@ const Dashboard = () => {
 
             <div className = "loggerContainer">
                 <div className="tabSelection">
-                    <button className={activeTab === "calendar" ? "activeTab" : "tabBtn"}
-                    onClick={() => setActiveTab("calendar")}>
-                        Calendar
-                    </button>
-
                     <button className={activeTab === "stats" ? "activeTab" : "tabBtn"}
                     onClick={() => setActiveTab("stats")}>
                         Stats
+                    </button>
+
+                    <button className={activeTab === "calendar" ? "activeTab" : "tabBtn"}
+                    onClick={() => setActiveTab("calendar")}>
+                        Calendar
                     </button>
                 </div>
             </div>
