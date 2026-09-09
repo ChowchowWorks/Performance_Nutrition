@@ -32,3 +32,5 @@ serviceAccountKey.json
 
 # set role
 setRole.js
+
+package-lock,json
