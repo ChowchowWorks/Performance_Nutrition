@@ -1,4 +1,4 @@
-import React , { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import './DataInput.css';
 import { db } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -14,6 +14,7 @@ const DataInput = () => {
     const [calorieCount, setCalorieCount] = useState("");
     const [mealType, setMealType] = useState("Breakfast");
     const [exerciseType, setExerciseType] = useState("");
+    const [weight, setWeight] = useState("");
 
     const saveExercise = () => {
         const data = {
@@ -30,6 +31,14 @@ const DataInput = () => {
         };
 
         console.log("Food saved:", data); // Need to replace with api save
+    };
+
+    const saveWeight = () => {
+        const data = {
+            weight,
+        };
+
+        console.log("Weight saved:", data); // Need to replace with api save
     };
 
     const [exerciseTypes, setExerciseTypes] = useState([]);
@@ -70,10 +79,11 @@ const DataInput = () => {
                         <h3> 📆 {currentDate} </h3>
                     </div>
 
-                    <p> Input your information here! This page consists of two tabs: </p>
+                    <p> Input your information here! This page consists of three tabs: </p>
                     <ul>
                         <li> <b> Exercise Tab: </b> Record details about your exercise activities. </li>
                         <li> <b> Food Tab: </b> Record info about the food you consumed. You may refer to the <i>MyFitnessPal</i> app to obtain calorie information.</li>
+                        <li> <b> Weight Tab: </b> Record your current body weight. </li>
                     </ul>
 
                 </div>
@@ -89,6 +99,12 @@ const DataInput = () => {
                         onClick={() => setActiveTab("food")}
                         >
                         Food
+                        </button>
+
+                        <button className={activeTab === "weight" ? "activeTab" : "tabBtn"}
+                        onClick={() => setActiveTab("weight")}
+                        >
+                        Weight
                         </button>
                     </div>
 
@@ -159,6 +175,27 @@ const DataInput = () => {
 
                                 <button className="SaveBtn"
                                     onClick={saveFood}>
+                                    Save
+                                </button>
+                            </div>
+                        )}
+
+                        {activeTab === "weight" && (
+                            <div className="weightForm">
+                                <div className="formRow">
+                                    <label htmlFor="weight">Current Weight</label>
+                                    <input
+                                        id="weight"
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="Enter weight in kg"
+                                        value={weight}
+                                        onChange={(e) => setWeight(e.target.value)}
+                                    />
+                                </div>
+
+                                <button className="SaveBtn" onClick={saveWeight}>
                                     Save
                                 </button>
                             </div>

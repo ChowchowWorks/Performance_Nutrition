@@ -11,16 +11,28 @@ const dummyMembers = [
 ];
 
 const editableFields = [
+  { value: 'calorieGoal', label: 'Calories Target (kcal)' },
+  { value: 'weightGoal', label: 'Weight Target (kg)' },
+  { value: 'stepGoal', label: 'Steps Target' },
+  { value: 'proteinGoal', label: 'Protein Target (g)' },
+  { value: 'waterGoal', label: 'Water Target (L)' },
+  { value: 'carbsGoal', label: 'Carbohydrates Target (g)' },
+  { value: 'fatGoal', label: 'Fat Target (g)' },
   { value: 'membershipTier', label: 'Membership Tier' },
-  { value: 'goalWeight', label: 'Goal Weight' },
   { value: 'assignedCoach', label: 'Assigned Coach' },
   { value: 'renewalDate', label: 'Renewal Date' },
   { value: 'status', label: 'Status' },
 ];
 
 const seedMemberData = {
+  calorieGoal: '2,200 kcal',
+  weightGoal: '68 kg',
+  stepGoal: '10,000 steps',
+  proteinGoal: '150 g',
+  waterGoal: '3 L',
+  carbsGoal: '250 g',
+  fatGoal: '70 g',
   membershipTier: 'Gold',
-  goalWeight: '68 kg',
   assignedCoach: 'Coach Amelia',
   renewalDate: '15 Aug 2026',
   status: 'Active',
@@ -76,6 +88,29 @@ export default function Members() {
       </div>
 
       <section className="membersWorkspace">
+        <aside className="memberPreviewCard">
+          <p className="previewLabel">Current Preview</p>
+          <h2>{memberName}</h2>
+          <div className="previewList">
+            <div className="previewColumn">
+              {editableFields.slice(0, 6).map((field) => (
+                <div className="previewRow" key={field.value}>
+                  <span>{field.label}</span>
+                  <strong>{memberData[field.value]}</strong>
+                </div>
+              ))}
+            </div>
+            <div className="previewColumn">
+              {editableFields.slice(6).map((field) => (
+                <div className="previewRow" key={field.value}>
+                  <span>{field.label}</span>
+                  <strong>{memberData[field.value]}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
+
         <form className="memberUpdateForm" onSubmit={handleSave}>
           <div className="formRow">
             <label htmlFor="memberName">Member&apos;s Name</label>
@@ -124,19 +159,6 @@ export default function Members() {
 
           {savedMessage && <p className="savedMessage">{savedMessage}</p>}
         </form>
-
-        <aside className="memberPreviewCard">
-          <p className="previewLabel">Current Preview</p>
-          <h2>{memberName}</h2>
-          <div className="previewList">
-            {editableFields.map((field) => (
-              <div className="previewRow" key={field.value}>
-                <span>{field.label}</span>
-                <strong>{memberData[field.value]}</strong>
-              </div>
-            ))}
-          </div>
-        </aside>
       </section>
     </div>
   );

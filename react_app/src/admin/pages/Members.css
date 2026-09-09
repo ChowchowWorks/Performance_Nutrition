@@ -53,12 +53,14 @@
 
 .membersWorkspace {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 18px;
+  grid-template-columns: 1fr;
+  gap: 24px;
 }
 
 .memberUpdateForm,
 .memberPreviewCard {
+  width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: 18px;
   border: 1px solid rgba(8, 32, 77, 0.06);
@@ -135,9 +137,16 @@
 }
 
 .previewList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.previewColumn {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 .previewRow {
@@ -159,13 +168,7 @@
   text-align: right;
 }
 
-@media (max-width: 1100px) {
-  .membersWorkspace {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 800px) {
+@media (max-width: 640px) {
   .adminMembersPage {
     padding: 24px;
   }
@@ -176,5 +179,9 @@
 
   .membersTitle {
     font-size: 2.2rem;
+  }
+
+  .previewList {
+    grid-template-columns: 1fr;
   }
 }
