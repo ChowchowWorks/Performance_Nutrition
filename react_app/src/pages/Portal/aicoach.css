@@ -1,94 +1,173 @@
-.coachContainer {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+.CoachPage {
+  min-height: calc(100vh - 60px);
+  padding: 40px;
+  background-color: #fff9f3;
+  box-sizing: border-box;
+  font-family: 'Hammersmith One', sans-serif;
 }
 
-.PageHead {
-  padding: 10px 20px;
+.headerRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.headerRow h3 {
+  margin: 10px 0 0;
+  font-size: 1.1rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+.pageName {
+  color: black;
+  font-size: 45px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.coachIntro {
+  margin: 8px 0 0;
+  color: #333;
+  font-size: 1.1rem;
 }
 
 .mainCoach {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  padding: 20px;
-  gap: 10px;
+  width: 100%;
+  height: min(680px, calc(100vh - 220px));
+  min-height: 440px;
+  gap: 16px;
 }
 
 .chatWindow {
   flex: 1;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 12px;
+  min-height: 0;
+  padding: 28px;
+  background: #fffdfb;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  left: calc(50% + 100px);
-  width: 1200px;
-  margin-bottom: 100px;
-  margin-left: 125px;
+  gap: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chatEmptyState {
+  margin: auto;
+  text-align: center;
+  color: #333;
+}
+
+.chatEmptyState h2 {
+  margin: 0 0 8px;
+  color: #10233d;
+}
+
+.chatEmptyState p {
+  margin: 0;
 }
 
 .userBubble {
   align-self: flex-end;
-  background: #DCF8C6;
-  padding: 10px 14px;
-  border-radius: 12px;
+  background: #e2834b;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px 12px 2px 12px;
   max-width: 80%;
+  line-height: 1.45;
 }
 
 .botBubble {
   align-self: flex-start;
-  background: #eeeeee;
-  padding: 10px 14px;
-  border-radius: 12px;
+  background: #f1eee9;
+  color: #333;
+  padding: 12px 16px;
+  border-radius: 12px 12px 12px 2px;
   max-width: 80%;
+  line-height: 1.45;
 }
 
-/* ---- ChatGPT-style bottom input bar ---- */
 .inputBar {
-  position: fixed;
-  bottom: 20px;
-  left: calc(50% + 100px);
-  transform: translateX(-50%);
-
   display: flex;
   align-items: center;
   gap: 10px;
-
-  width: 60%;              /* Not full width */
-  max-width: 700px;
-  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fffdfb;
   padding: 12px 16px;
-  border-radius: 20px;
-  box-shadow: 0px 3px 12px rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* ---- Input field ---- */
 .chatInput {
   flex: 1;
   padding: 10px 14px;
-  border: none;
+  border: 1px solid #ccc;
   outline: none;
   font-size: 16px;
-  border-radius: 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  min-width: 0;
 }
 
-/* ---- Send button ---- */
+.chatInput:focus {
+  border-color: #e2834b;
+  box-shadow: 0 0 5px rgba(226, 131, 75, 0.25);
+}
+
 .sendButton {
-  background: #4a90e2;
+  background: #e2834b;
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 12px;
+  padding: 11px 20px;
+  border-radius: 6px;
   font-size: 15px;
+  font-family: inherit;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
 .sendButton:hover {
-  background: #3b7ac3;
+  background: #d16323;
+}
+
+.sendButton:disabled {
+  background: #c7c1ba;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .CoachPage {
+    padding: 24px 18px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .headerRow h3 {
+    margin: 0;
+    white-space: normal;
+  }
+
+  .pageName {
+    font-size: 36px;
+  }
+
+  .mainCoach {
+    height: calc(100vh - 235px);
+    min-height: 400px;
+  }
+
+  .chatWindow {
+    padding: 18px;
+  }
 }
