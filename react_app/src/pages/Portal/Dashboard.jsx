@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import './Dashboard.css';
@@ -9,83 +9,89 @@ import MetricCard from "../../components/MetricCard";
 import WorkoutCarousel from "../../components/WorkoutCarousel";
 import WorkoutChart from "../../components/WorkoutChart";
 
+import { supabase } from "../../supabase.js";
+
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("stats");
 
-    const exerciseDateList = [
-    { date: "2026-06-03", type: "Running", duration: 30 },
-    { date: "2026-06-07", type: "Cycling", duration: 45 },
-    { date: "2026-06-12", type: "Swimming", duration: 60 },
-    { date: "2026-06-19", type: "Gym", duration: 50 },
-    { date: "2026-06-23", type: "Walking", duration: 40 },
-    ];
+    const [calendarEvents, setCalendarEvents] = useState({});
 
-    const [exerciseDates] = useState(() => {
-    const stickers = {};
+    const toTitleCase = (text) => {
+        if (!text) return "";
 
-    exerciseDateList.forEach((exercise) => {
-        stickers[exercise.date] = {
-        type: exercise.type,
-        duration: exercise.duration,
-        rotate: -15 + Math.random() * 30,
-        };
-    });
-
-    return stickers;
-    });
-
-    const addSticker = (info) => {
-        const dateStr = info.date.toLocaleDateString("en-CA");
-        const sticker = exerciseDates[dateStr];
-
-        if (!sticker) return;
-
-        const frame = info.el.querySelector(".fc-daygrid-day-frame");
-        if (!frame) return;
-
-        const existingStar = frame.querySelector(".exercise-star");
-        if (existingStar) existingStar.remove();
-
-        const existingInfo = frame.querySelector(".exercise-info");
-        if (existingInfo) existingInfo.remove();
-
-        const star = document.createElement("span");
-
-        star.className = "exercise-star";
-        star.innerText = "⭐";
-
-        star.style.position = "absolute";
-        star.style.top = "4px";
-        star.style.left = "4px";
-        star.style.fontSize = "1.3rem";
-        star.style.transform = `rotate(${sticker.rotate}deg)`;
-        star.style.pointerEvents = "none";
-        star.style.zIndex = "2";
-
-        frame.style.position = "relative";
-        frame.appendChild(star);
-
-        const exerciseInfo = document.createElement("div");
-
-        exerciseInfo.className = "exercise-info";
-        exerciseInfo.innerText = `${sticker.duration} min ${sticker.type}`;
-
-        exerciseInfo.style.position = "absolute";
-        exerciseInfo.style.top = "45px";
-        exerciseInfo.style.left = "4px";
-        exerciseInfo.style.right = "4px";
-        exerciseInfo.style.padding = "5px 7px";
-        exerciseInfo.style.borderRadius = "4px";
-        exerciseInfo.style.fontSize = "0.9rem";
-        exerciseInfo.style.backgroundColor = "#047857";
-        exerciseInfo.style.color = "white";
-        exerciseInfo.style.overflow = "hidden";
-        exerciseInfo.style.whiteSpace = "nowrap";
-        exerciseInfo.style.textOverflow = "ellipsis";
-        exerciseInfo.style.zIndex = "2";
-
-        frame.appendChild(exerciseInfo);
+        return text
+            .split(" ")
+            .map(word => 
+                word.charAt(0).toUpperCase() +
+                word.slice(1).toLowerCase()
+            ).join(" ");
     };
+
+    const getCalendarWorkouts = async (start, end) => {
+        const { data, error } = await supabase
+            .from("workouts")
+            .select(`
+                date, 
+                duration,
+                exercise_type
+            `)
+            .gte("date", start.toISOString())
+            .lt("date", end.toISOString())
+            .order("date", { ascending: true });
+        
+        if (error) {
+            console.error("Error fetching calendar workouts:", error);
+            return;
+        }
+
+        const workoutsByDay = {};
+
+        (data ?? []).forEach((workout) => {
+            const workoutDate = new Date(workout.date);
+            
+            const dateKey = workoutDate.toLocaleDateString("en-CA");
+
+            if (!workoutsByDay[dateKey]) {
+                workoutsByDay[dateKey] = [];
+            }
+
+            workoutsByDay[dateKey].push({
+                type: toTitleCase(workout.exercise_type),
+                duration: workout.duration
+            });
+        });
+
+        const events = [];
+
+            Object.entries(workoutsByDay).forEach(
+            ([date, workouts]) => {
+
+                if (workouts.length <= 3) {
+                    workouts.forEach((workout) => {
+                        events.push({
+                            title:
+                                `⭐ ${workout.duration} min ${workout.type}`,
+                            date
+                        });
+                    });
+                } else {
+                    const totalDuration = workouts.reduce(
+                        (sum, workout) =>
+                            sum + workout.duration,
+                        0
+                    );
+
+                    events.push({
+                        title:
+                            `⭐ ${workouts.length} workouts · ${totalDuration} min`,
+                        date
+                    });
+                }
+            }
+        );
+
+        setCalendarEvents(events);
+    }
 
     const currentDate = new Date().toLocaleDateString("en-GB", {
         year: "numeric",
@@ -93,141 +99,363 @@ const Dashboard = () => {
         day: "numeric",
         weekday: "long"
     });
+    
+    // States for Stats and Goals
+    const [todayStats, setTodayStats] = useState(null);
+    const [nutritionGoals, setNutritionGoals] = useState(null);
 
-    const dashboardData = {
-        summary: {
-            calories: {
-                current: 1850,
-                goal: 2000,
-            },
-            weight: {
-                current: 72.8,
-                goal: 70,
-            },
-            steps: {
-                current: 8214,
-                goal: 10000,
-            },
-            protein: {
-                current: 132,
-                goal: 150,
-            },
-            water: {
-                current: 2.1,
-                goal: 3.0,
-            },
-        },
+    // Obtain Today's Information
+    // Calories, Weight, Steps, Protein, Water
+    useEffect(() => {
+        const getTodayStats = async () => {
+            const now = new Date();
 
-        weightHistory: [
-            { date: "Jun 1", weight: 74.2 },
-            { date: "Jun 5", weight: 73.9 },
-            { date: "Jun 10", weight: 73.4 },
-            { date: "Jun 15", weight: 73.1 },
-            { date: "Jun 20", weight: 72.9 },
-            { date: "Jun 25", weight: 72.8 },
-        ],
+            const start = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate()
+            );
 
-        nutrition: {
-            calories: {
-                current: 1850,
-                goal: 2000,
-            },
+            const end = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() + 1
+            );
 
-            protein: {
-                current: 132,
-                goal: 150,
-            },
+            const { data: aggregateData, error: aggregateError } = await supabase
+            .from("nutrition_stats")
+            .select(`
+                calories:calories.sum(),
+                steps:steps.sum(),
+                water:water.sum(),
+                protein:protein.sum(),
+                carbs:carbs.sum(),
+                fat:fat.sum()
+                `)
+            .gte("date", start.toISOString())
+            .lt("date", end.toISOString())
+            .maybeSingle();
 
-            carbs: {
-                current: 180,
-                goal: 250,
-            },
-
-            fat: {
-                current: 58,
-                goal: 70,
-            },
-        },
-
-        workout: {
-
-            summary: {
-                totalWorkouts: 14,
-                totalMinutes: 620,
-                averageDuration: 44,
-                caloriesBurned: 3850,
-                favouriteExercise: "Running"
-            },
-
-            history: [
-
-                {
-                    id:1,
-                    exercise:"Running",
-                    date:"2026-06-24",
-                    duration:45,
-                    calories:480
-                },
-
-                {
-                    id:2,
-                    exercise:"Strength",
-                    date:"2026-06-22",
-                    duration:60,
-                    calories:620
-                },
-
-                {
-                    id:3,
-                    exercise:"Cycling",
-                    date:"2026-06-20",
-                    duration:90,
-                    calories:760
-                },
-
-                {
-                    id:4,
-                    exercise:"Swimming",
-                    date:"2026-06-18",
-                    duration:40,
-                    calories:390
-                },
-
-                {
-                    id:5,
-                    exercise:"Walking",
-                    date:"2026-06-15",
-                    duration:30,
-                    calories:170
-                }
-
-            ],
-        
-        trend: [
-
-            {
-                week: "Week 1",
-                minutes: 180
-            },
-
-            {
-                week: "Week 2",
-                minutes: 135
-            },
-
-            {
-                week: "Week 3",
-                minutes: 220
-            },
-
-            {
-                week: "Week 4",
-                minutes: 165
+            if (aggregateError) {
+                console.error("Error featching today's nutrition:", aggregateError);
+                return;
             }
 
-        ]
+            const { data: latestWeight, error: weightError } = await supabase
+            .from("nutrition_stats")
+            .select("weight")
+            .gte("date", start.toISOString())
+            .lt("date", end.toISOString())
+            .not("weight", "is", null)
+            .order("date", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+            if (weightError) {
+                console.error("Error fetching today's weight:", weightError);
+                return;
+            }
+
+            setTodayStats({
+                calories: aggregateData?.calories ?? 0,
+                weight: latestWeight?.weight ?? null,
+                steps: aggregateData?.steps ?? 0,
+                water: aggregateData?.water ?? 0,
+                protein: aggregateData?.protein ?? 0,
+                carbs: aggregateData?.carbs ?? 0,
+                fat: aggregateData?.fat ?? 0
+            });
+        };
+
+        getTodayStats();
+        }, [])
+
+    // Obtain Nutrition Goals
+    // Calorie, Protein, Carb, Fat, Weight, Step, Water Goals
+    useEffect(() => {
+        const getGoals = async () => {
+
+            const { data, error } = await supabase
+            .from("nutrition_goals")
+            .select(`
+                calorie_goal,
+                protein_goal,
+                carbs_goal,
+                fat_goal,
+                weight_goal,
+                step_goal,
+                water_goal
+                `)
+            .maybeSingle();
+
+            if (error) {
+                console.error("Error fetching nutrition goals:", error);
+                return;
+            }
+
+            setNutritionGoals(data);
+        };
+
+        getGoals();
+        }, [])
+
+    // Set Workout State
+    const [workoutSummary, setWorkoutSummary] = useState(null);
+    const [favouriteExercise, setFavouriteExercise] = useState(null);
+    const [workoutHistory, setWorkoutHistory] = useState([]);
+
+    // Obtain Workout Information
+    // workoutAllTime: Aggregation of ALl Workouts
+    // favouriteExercise: Frequency of favourite kind of exercise for that particular user
+    // workoutHistory: Each workout history is displayed using a forEach (not implemented yet) 
+    useEffect(() => {
+
+        const workoutAllTime = async () => {
+
+            const { data, error } = await supabase
+            .from("workouts")
+            .select(`
+                totalWorkouts:id.count(),
+                totalMinutes:duration.sum(),
+                averageDuration:duration.avg(),
+                caloriesBurned:calories.sum()
+                `)
+            .maybeSingle();
+
+            if (error) {
+                console.error("Error fetching workout summary:", error);
+                return;
+            }
+
+            setWorkoutSummary({
+                totalWorkouts: data?.totalWorkouts ?? 0,
+                totalMinutes: data?.totalMinutes ?? 0,
+                averageDuration: Math.round((data?.averageDuration ?? 0) * 10 / 10),
+                caloriesBurned: data?.caloriesBurned ?? 0
+            });
+        };
+
+        const getFavouriteExercise = async () => {
+            const { data, error } = await supabase
+                .from("workouts")
+                .select(`
+                    exercise_type,
+                    count:id.count()
+                `)
+                .not("exercise_type", "is", null);
+
+            if (error) {
+                console.error("Error fetching favourite exercise:", error);
+                return;
+            }
+
+            // No workouts yet
+            if (!data || data.length === 0) {
+                setFavouriteExercise(null);
+                return;
+            }
+
+            // Find the highest frequency
+            const maxCount = Math.max(
+                ...data.map((exercise) => exercise.count)
+            );
+
+            // Get all exercises tied for highest frequency,
+            // but display at most 3
+            const favourites = data
+                .filter((exercise) => exercise.count === maxCount)
+                .map((exercise) => exercise.exercise_type)
+                .filter(Boolean)
+                .slice(0, 3);
+
+            let displayValue = null;
+
+            if (favourites.length === 1) {
+                displayValue = toTitleCase(favourites[0]);
+            } else if (favourites.length === 2) {
+                displayValue = `${toTitleCase(favourites[0])} and ${toTitleCase(favourites[1])}`;
+            } else if (favourites.length === 3) {
+                displayValue =
+                    `${toTitleCase(favourites[0])}, ${toTitleCase(favourites[1])} and ${toTitleCase(favourites[2])}`;
+            }
+
+            setFavouriteExercise(displayValue);
         }
-    };
+
+        const getWorkoutHistory = async () => {
+            const { data, error } = await supabase
+            .from("workouts")
+            .select(`
+                id,
+                exercise:exercise_type,
+                date,
+                duration,
+                calories
+                `)
+            .order("date", { ascending: false })
+            .limit(5);
+            
+            if (error) {
+                console.error("Error fetching workout history:", error);
+                return;
+            }
+
+            const formattedData = (data ?? []).map((workout) => ({
+                ...workout,
+
+                exercise: toTitleCase(workout.exercise),
+
+                date: new Date(workout.date).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                })
+            }));
+
+            setWorkoutHistory(formattedData);
+        };
+
+        workoutAllTime();
+        getFavouriteExercise();
+        getWorkoutHistory();
+        }, [])
+
+    // Weight State Info
+    const [weightHistory, setWeightHistory] = useState([]);
+
+    // Get Weight Info
+    useEffect(() => {
+        const getWeightHistory = async () => {
+            const now = new Date();
+
+            // get 30 calendar days ago date
+            const start = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() - 29
+            )
+
+            // get tomorrow's date
+            const end = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() + 1
+            );
+
+            // altogether, past 30 day weight info
+            const { data, error } = await supabase
+                .from("nutrition_stats")
+                .select(`
+                    date,
+                    weight
+                `)
+                .gte("date", start.toISOString())
+                .lt("date", end.toISOString())
+                .not("weight", "is", null)
+                .order("date", { ascending: true });
+            
+            if (error) {
+                console.error("Error fetching weight history:", error);
+                return;
+            }
+
+            const latestByDay = {};
+
+            // get the lastest weight for each day
+            data.forEach((record) => {
+                const recordDate = new Date(record.date);
+
+                const dateKey = recordDate.toLocaleDateString("en-CA");
+
+                latestByDay[dateKey] = {
+                    date: recordDate.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short"
+                    }),
+                    weight: record.weight
+                };
+            });
+
+            const formattedHistory = Object.values(latestByDay);
+            setWeightHistory(formattedHistory);
+        }
+
+        getWeightHistory();
+    }, [])
+
+    // Workout Trend Cards
+    const [workoutTrend, setWorkoutTrend] = useState([]);
+
+    useEffect(() => {
+        const getWorkoutTrend = async () => {
+            const now = new Date();
+
+            const startOfMonth = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                1
+            );
+
+            const startOfNextMonth = new Date(
+                now.getFullYear(),
+                now.getMonth() + 1,
+                1
+            );
+
+            const { data, error } = await supabase
+                .from("workouts")
+                .select(`
+                    date,
+                    duration
+                `)
+                .gte("date", startOfMonth.toISOString())
+                .lt("date", startOfNextMonth.toISOString())
+                .order("date", { ascending: true });
+            
+            if (error) {
+                console.error("Error fetching workout trend:", error);
+                return;
+            }
+
+            const daysInMonth = new Date(
+                now.getFullYear(),
+                now.getMonth() + 1,
+                0
+            ).getDate();
+
+            const numberOfWeeks = Math.ceil(daysInMonth / 7);
+
+            const weeklyTotals = {};
+            
+            for (let week = 1; week <= numberOfWeeks; week++) {
+                weeklyTotals[`Week ${week}`] = 0;
+            }
+
+            data.forEach((workout) => {
+                const workoutDate = new Date(workout.date);
+
+                const dayOfMonth = workoutDate.getDate();
+
+                const weekNumber = Math.ceil(dayOfMonth / 7);
+
+                const weekKey = `Week ${weekNumber}`;
+
+                weeklyTotals[weekKey] = 
+                    (weeklyTotals[weekKey] ?? 0) +
+                    workout.duration;
+            });
+
+            const formattedTrend = Object.entries(weeklyTotals)
+                .map(([week, minutes]) => ({
+                    week,
+                    minutes
+                }));
+            
+            setWorkoutTrend(formattedTrend);
+        };
+
+        getWorkoutTrend();
+    }, [])
 
     return (
         <div className = "DashboardPage">
@@ -256,12 +484,15 @@ const Dashboard = () => {
                         <FullCalendar
                             plugins = {[ dayGridPlugin ]}
                             initialView = "dayGridMonth"
-                            dayCellDidMount = {addSticker}
+                            events = {calendarEvents}
+                            datesSet = {(info) => {
+                                getCalendarWorkouts(info.start, info.end);
+                            }}
                         />
                     </>
                 )}
             </div>
-
+                
             <div className = "loggerCard"> 
                 {activeTab === "stats" && (
                     <div className="statsContainer">
@@ -272,71 +503,75 @@ const Dashboard = () => {
                             <SummaryCard
                                 icon="🔥"
                                 title="Calories"
-                                current={dashboardData.summary.calories.current}
-                                goal={dashboardData.summary.calories.goal}
+                                current={todayStats?.calories ?? 0}
+                                goal={nutritionGoals?.calorie_goal ?? 0}
                                 unit=" kcal"
                             />
 
                             <SummaryCard
                                 icon="⚖️"
                                 title="Weight"
-                                current={dashboardData.summary.weight.current}
-                                goal={dashboardData.summary.weight.goal}
+                                current={todayStats?.weight ?? "-"}
+                                goal={nutritionGoals?.weight_goal ?? 0}
                                 unit=" kg"
                             />
 
                             <SummaryCard
                                 icon="👟"
                                 title="Steps"
-                                current={dashboardData.summary.steps.current}
-                                goal={dashboardData.summary.steps.goal}
+                                current={todayStats?.steps ?? 0}
+                                goal={nutritionGoals?.step_goal ?? 0}
                                 unit=""
                             />
 
                             <SummaryCard
                                 icon="🥩"
                                 title="Protein"
-                                current={dashboardData.summary.protein.current}
-                                goal={dashboardData.summary.protein.goal}
+                                current={todayStats?.protein ?? 0}
+                                goal={nutritionGoals?.protein_goal ?? 0}
                                 unit=" g"
                             />
 
                             <SummaryCard
                                 icon="💧"
                                 title="Water"
-                                current={dashboardData.summary.water.current}
-                                goal={dashboardData.summary.water.goal}
+                                current={todayStats?.water ?? 0}
+                                goal={nutritionGoals?.water_goal ?? 0}
                                 unit=" L"
                             />
                         </div>
 
-                        <WeightChart data={dashboardData.weightHistory} />
+                        <WeightChart data={weightHistory} />
 
                         <div className="nutritionSection">
 
                             <h2>Nutrition Overview</h2>
-
+                            
                             <NutritionCard
                                 title="Calories"
-                                {...dashboardData.nutrition.calories}
+                                current={todayStats?.calories ?? 0}
+                                goal={nutritionGoals?.calorie_goal ?? 0}
                                 unit="kcal"
                             />
 
                             <NutritionCard
                                 title="Protein"
-                                {...dashboardData.nutrition.protein}
+                                current={todayStats?.protein ?? 0}
+                                goal={nutritionGoals?.protein_goal ?? 0}
                                 unit="g"
                             />
 
                             <NutritionCard
                                 title="Carbohydrates"
-                                {...dashboardData.nutrition.carbs}
+                                current={todayStats?.carbs ?? 0}
+                                goal={nutritionGoals?.carbs_goal ?? 0}
                                 unit="g"
                             />
 
                             <NutritionCard
                                 title="Fat"
-                                {...dashboardData.nutrition.fat}
+                                current={todayStats?.fat ?? 0}
+                                goal={nutritionGoals?.fat_goal ?? 0}
                                 unit="g"
                             />
 
@@ -347,37 +582,44 @@ const Dashboard = () => {
                             <MetricCard
                                 icon="🏋️"
                                 title="Workouts"
-                                value={dashboardData.workout.summary.totalWorkouts}
+                                value={workoutSummary?.totalWorkouts ?? 0}
+                            />
+
+                            <MetricCard
+                                icon="⚖️"
+                                title="Minutes"
+                                value={workoutSummary?.totalMinutes ?? 0}
+                                unit="min"
                             />
 
                             <MetricCard
                                 icon="⏱"
-                                title="Minutes"
-                                value={dashboardData.workout.summary.totalMinutes}
+                                title="Average Workout Duration"
+                                value={workoutSummary?.averageDuration ?? 0}
                                 unit="min"
                             />
 
                             <MetricCard
                                 icon="🔥"
                                 title="Calories Burned"
-                                value={dashboardData.workout.summary.caloriesBurned}
+                                value={workoutSummary?.caloriesBurned ?? 0}
                                 unit="kcal"
                             />
 
                             <MetricCard
                                 icon="🏃"
                                 title="Favourite Exercise"
-                                value={dashboardData.workout.summary.favouriteExercise}
+                                value={favouriteExercise ?? "—"}
                             />
 
                         </div>
 
                         <WorkoutCarousel
-                            workouts={dashboardData.workout.history}
+                            workouts={workoutHistory}
                         />
 
                         <WorkoutChart
-                            data = {dashboardData.workout.trend}
+                            data = {workoutTrend}
                         />    
                         
                     </div>

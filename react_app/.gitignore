@@ -26,3 +26,9 @@ dist-ssr
 # environment variables
 .env
 .env.local
+
+# service account key
+serviceAccountKey.json
+
+# set role
+setRole.js
