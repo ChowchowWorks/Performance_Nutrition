@@ -1,4 +1,4 @@
-from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
+from langchain.prompts import ChatPromptTemplate
 ## Casual LLM Prompt and Prompt template 
 
 casuals = """
@@ -70,6 +70,7 @@ grade_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
+from langchain.prompts import FewShotChatMessagePromptTemplate
 ## Intent Detection Prompt 
 # Few shot examplex 
 
