@@ -1,9 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import "./aicoach.css";
+import { auth } from "../../firebase";
+import { supabase } from "../../supabase";
 
 const Coach = () => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const storageKey = auth.currentUser
+    ? `ai-coach-messages-${auth.currentUser.uid}`
+    : null;
+  const [messages, setMessages] = useState(() => {
+    if (!storageKey) return [];
+
+    try {
+      const savedMessages = localStorage.getItem(storageKey);
+      return savedMessages ? JSON.parse(savedMessages) : [];
+    } catch (error) {
+      console.error("Unable to load AI Coach conversation:", error);
+      return [];
+    }
+  });
   const chatRef = useRef(null);
 
   const currentDate = new Date().toLocaleDateString("en-GB", {
@@ -20,8 +35,60 @@ const Coach = () => {
     }
   }, [messages]);
 
-    const handleSend = async () => {
+  useEffect(() => {
+    if (!storageKey) return;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    } catch (error) {
+      console.error("Unable to save AI Coach conversation:", error);
+    }
+  }, [messages, storageKey]);
+
+  const getUserData = async (userId) => {
+    const [workouts, nutrition, goals] = await Promise.all([
+      supabase
+        .from("workouts")
+        .select("date, exercise_type, duration, calories, step_count")
+        .eq("user_id", userId)
+        .order("date", { ascending: false })
+        .limit(100),
+      supabase
+        .from("nutrition_stats")
+        .select("date, meal_type, calories, protein, carbs, fat, water, weight")
+        .eq("user_id", userId)
+        .order("date", { ascending: false })
+        .limit(100),
+      supabase
+        .from("nutrition_goals")
+        .select("calorie_goal, protein_goal, carbs_goal, fat_goal, weight_goal, step_goal, water_goal")
+        .eq("user_id", userId)
+        .maybeSingle()
+    ]);
+
+    const failedQuery = [workouts, nutrition, goals].find(({ error }) => error);
+    if (failedQuery?.error) {
+      throw failedQuery.error;
+    }
+
+    return {
+      workouts: workouts.data ?? [],
+      nutrition: nutrition.data ?? [],
+      goals: goals.data ?? null
+    };
+  };
+
+  const handleSend = async () => {
     if (!message.trim()) return;
+
+    const user = auth.currentUser;
+    if (!user) {
+      setMessages(prev => [
+        ...prev,
+        { role: "bot", text: "Please log in again before using the AI Coach." }
+      ]);
+      return;
+    }
 
     const userMessage = message.trim();
 
@@ -35,14 +102,31 @@ const Coach = () => {
     ]);
 
     try {
-        const response = await fetch("/api", {
+        const userData = await getUserData(user.uid);
+        const response = await fetch(
+          import.meta.env.VITE_CHATBOT_API_URL || "http://localhost:8000/ask",
+          {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             question: userMessage,
-            history: messages.filter(m => !m.temp) // send only real messages as history
+            history: messages
+              .filter(m => !m.temp)
+              .map(({ role, text }) => ({
+                role: role === "bot" ? "assistant" : role,
+                content: text
+              })),
+            user_data: userData
         })
-        });
+          }
+        );
+
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw new Error(
+            errorBody.detail || `AI Coach request failed (${response.status})`
+          );
+        }
 
         const data = await response.json();
         const answer = data.answer || "No answer received.";
@@ -56,7 +140,7 @@ const Coach = () => {
         setMessages(prev =>
         prev.map(msg =>
             msg.id === thinkingId
-            ? { role: "bot", text: "Error generating response" }
+            ? { role: "bot", text: err.message || "Error generating response" }
             : msg
         )
         );
@@ -103,6 +187,7 @@ const Coach = () => {
           <input
             className="chatInput"
             type="text"
+            autoComplete="off"
             placeholder="Ask your coach a question..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}

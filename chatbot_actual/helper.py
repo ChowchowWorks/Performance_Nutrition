@@ -240,21 +240,8 @@ def rag_activation(question, history):
     raise Exception("Error code 2h: Routing failed")
   
 def handle_new_file(local_path):
-    # store the files into the Datastore inside GCS
-    try:
-        uploaded_files, rejected_files = upload_to_r2(local_path)
-    except Exception as e:
-        print("---Error: File Upload to Cloudflare R2 Failed ---")
-        print(f"Reason: {e}")
-
-    # update current chroma_db with the new embeddedings#
-    texts = receive(local_path)
-    if not embed(texts):
-        raise Exception("--- Error: Text Emedding Failed---")
-    if not upload_chroma_to_r2():
-        raise Exception("---Error: Failed to upload Chroma to Cloud---")
-    
-    print(f"Total number of files uploaded: {len(uploaded_files)}")
-    print(f"Rejected Files: {rejected_files}")
-
-    return (uploaded_files, rejected_files)   
+  # update the local vector store with the new embeddings
+  texts = receive(local_path)
+  if not embed(texts):
+    raise Exception("--- Error: Text Emedding Failed---")
+  return True

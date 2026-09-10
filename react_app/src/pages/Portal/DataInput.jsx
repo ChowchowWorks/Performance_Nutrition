@@ -24,6 +24,7 @@ const DataInput = () => {
 
     const [exerciseType, setExerciseType] = useState("");
     const [weight, setWeight] = useState("");
+    const [weightError, setWeightError] = useState("");
 
     const saveExercise = async () => {
         const user = auth.currentUser;
@@ -191,15 +192,16 @@ const DataInput = () => {
     };
 
     const saveWeight = async () => {
+        setWeightError("");
         const user = auth.currentUser;
 
         if (!user) {
-            alert("You must be logged in to save your weight.");
+            setWeightError("You must be logged in to save your weight.");
             return;
         }
 
         if (weight === "") {
-            alert("Please enter your weight.");
+            setWeightError("Please enter your weight.");
             return;
         }
 
@@ -209,7 +211,7 @@ const DataInput = () => {
             !Number.isFinite(weightValue) ||
             weightValue <= 0
         ) {
-            alert("Please enter a valid weight.");
+            setWeightError("Please enter a valid weight.");
             return;
         }
 
@@ -229,7 +231,7 @@ const DataInput = () => {
 
         if (error) {
             console.error("Error saving weight:", error);
-            alert("Unable to save weight.");
+            setWeightError(`Unable to save weight: ${error.message}`);
             return;
         }
 
@@ -453,6 +455,11 @@ const DataInput = () => {
                                 <button className="SaveBtn" onClick={saveWeight}>
                                     Save
                                 </button>
+                                {weightError && (
+                                    <p className="weightError" role="alert">
+                                        {weightError}
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>
