@@ -2,7 +2,7 @@ import os
 from chatbot_actual.config import *
 from google.cloud import storage
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def load(file: str):
     if os.path.isdir(file):
