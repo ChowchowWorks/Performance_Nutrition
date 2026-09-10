@@ -14,7 +14,7 @@ import { supabase } from "../../supabase.js";
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("stats");
 
-    const [calendarEvents, setCalendarEvents] = useState({});
+    const [calendarEvents, setCalendarEvents] = useState([]);
 
     const toTitleCase = (text) => {
         if (!text) return "";
@@ -122,11 +122,24 @@ const Dashboard = () => {
                 now.getDate() + 1
             );
 
+            const { data: stepData, error: stepError } = await supabase
+                .from("workouts")
+                .select(`
+                    steps:step_count.sum()
+                `)
+                .gte("date", start.toISOString())
+                .lt("date", end.toISOString())
+                .maybeSingle();
+
+            if (stepError) {
+                console.error("Error fetching today's steps:", stepError);
+                return;
+            }
+
             const { data: aggregateData, error: aggregateError } = await supabase
             .from("nutrition_stats")
             .select(`
                 calories:calories.sum(),
-                steps:steps.sum(),
                 water:water.sum(),
                 protein:protein.sum(),
                 carbs:carbs.sum(),
@@ -141,25 +154,62 @@ const Dashboard = () => {
                 return;
             }
 
-            const { data: latestWeight, error: weightError } = await supabase
-            .from("nutrition_stats")
-            .select("weight")
-            .gte("date", start.toISOString())
-            .lt("date", end.toISOString())
-            .not("weight", "is", null)
-            .order("date", { ascending: false })
-            .limit(1)
-            .maybeSingle();
+            let weightData = null;
+            let weightDate = null;
+            let isPreviousWeight = false;
 
-            if (weightError) {
-                console.error("Error fetching today's weight:", weightError);
+            // First: try to get today's latest weight
+            const { data: todayWeight, error: todayWeightError } = await supabase
+                .from("nutrition_stats")
+                .select("weight, date")
+                .gte("date", start.toISOString())
+                .lt("date", end.toISOString())
+                .not("weight", "is", null)
+                .order("date", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (todayWeightError) {
+                console.error("Error fetching today's weight:", todayWeightError);
                 return;
+            }
+
+            if (todayWeight) {
+                weightData = todayWeight.weight;
+                weightDate = todayWeight.date;
+            } else {
+                // No weight today → get most recent recorded weight
+                const { data: previousWeight, error: previousWeightError } = await supabase
+                    .from("nutrition_stats")
+                    .select("weight, date")
+                    .not("weight", "is", null)
+                    .order("date", { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                if (previousWeightError) {
+                    console.error(
+                        "Error fetching most recent weight:",
+                        previousWeightError
+                    );
+                    return;
+                }
+
+                if (previousWeight) {
+                    weightData = previousWeight.weight;
+                    weightDate = previousWeight.date;
+                    isPreviousWeight = true;
+                }
             }
 
             setTodayStats({
                 calories: aggregateData?.calories ?? 0,
-                weight: latestWeight?.weight ?? null,
-                steps: aggregateData?.steps ?? 0,
+                weight: weightData,
+                weightDate: weightDate,
+                isPreviousWeight: isPreviousWeight,
+
+                steps: stepData?.steps ?? 0,
+
                 water: aggregateData?.water ?? 0,
                 protein: aggregateData?.protein ?? 0,
                 carbs: aggregateData?.carbs ?? 0,
@@ -230,7 +280,7 @@ const Dashboard = () => {
             setWorkoutSummary({
                 totalWorkouts: data?.totalWorkouts ?? 0,
                 totalMinutes: data?.totalMinutes ?? 0,
-                averageDuration: Math.round((data?.averageDuration ?? 0) * 10 / 10),
+                averageDuration: Math.round((data?.averageDuration ?? 0) * 10) / 10,
                 caloriesBurned: data?.caloriesBurned ?? 0
             });
         };
@@ -457,6 +507,17 @@ const Dashboard = () => {
         getWorkoutTrend();
     }, [])
 
+    const weightCaption =
+        todayStats?.isPreviousWeight && todayStats?.weightDate
+            ? `Last recorded on ${new Date(
+                todayStats.weightDate
+            ).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            })}`
+            : null;
+
     return (
         <div className = "DashboardPage">
             <div className = "headerRow">
@@ -514,6 +575,7 @@ const Dashboard = () => {
                                 current={todayStats?.weight ?? "-"}
                                 goal={nutritionGoals?.weight_goal ?? 0}
                                 unit=" kg"
+                                caption={weightCaption}
                             />
 
                             <SummaryCard
@@ -545,7 +607,7 @@ const Dashboard = () => {
 
                         <div className="nutritionSection">
 
-                            <h2>Nutrition Overview</h2>
+                            <h2> Today's Nutrition Overview</h2>
                             
                             <NutritionCard
                                 title="Calories"
