@@ -1,6 +1,6 @@
 import "./SummaryCard.css";
 
-function SummaryCard({ icon, title, current, goal, unit }) {
+function SummaryCard({ icon, title, current, goal, unit, caption }) {
 
     const percentage = Math.min((current / goal) * 100, 100);
 
@@ -16,6 +16,12 @@ function SummaryCard({ icon, title, current, goal, unit }) {
                 {current}
                 {unit}
             </h2>
+
+            {caption && (
+                <p className="summaryCaption">
+                    {caption}
+                </p>
+            )}
 
             <p>
                 Goal: {goal}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import './DataInput.css';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
+import { supabase } from '../../supabase';
 import { collection, getDocs } from 'firebase/firestore';
 
 // Main Data Input Component 
@@ -11,34 +12,229 @@ const DataInput = () => {
     const [duration, setDuration] = useState("");
     const [stepCount, setStepCount] = useState("");
 
+    const [caloriesBurned, setCaloriesBurned] = useState("");
+
     const [calorieCount, setCalorieCount] = useState("");
     const [mealType, setMealType] = useState("Breakfast");
+
+    const [carbs, setCarbs] = useState("");
+    const [protein, setProtein] = useState("");
+    const [fat, setFat] = useState("");
+    const [water, setWater] = useState("");
+
     const [exerciseType, setExerciseType] = useState("");
     const [weight, setWeight] = useState("");
 
-    const saveExercise = () => {
-        const data = {
-            type: exerciseType,
-            duration,
-            stepCount: stepCount || null,
-        };
-        console.log("Exercise saved:", data); // Need to replace with api save
+    const saveExercise = async () => {
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("You must be logged in to save an exercise.");
+            return;
+        }
+
+        // Required fields
+        if (
+            !exerciseType ||
+            duration === "" ||
+            caloriesBurned === ""
+        ) {
+            alert(
+                "Please enter the exercise type, duration and calories burned."
+            );
+            return;
+        }
+
+        const durationValue = Number(duration);
+        const caloriesValue = Number(caloriesBurned);
+        const stepsValue = stepCount === "" ? 0 : Number(stepCount);
+
+        // Validate numeric values
+        if (
+            !Number.isFinite(durationValue) ||
+            durationValue <= 0 ||
+            !Number.isInteger(durationValue)
+        ) {
+            alert("Duration must be a positive whole number.");
+            return;
+        }
+
+        if (
+            !Number.isFinite(caloriesValue) ||
+            caloriesValue < 0 ||
+            !Number.isInteger(caloriesValue)
+        ) {
+            alert("Calories burned must be a non-negative whole number.");
+            return;
+        }
+
+        if (
+            !Number.isFinite(stepsValue) ||
+            stepsValue < 0 ||
+            !Number.isInteger(stepsValue)
+        ) {
+            alert("Step count must be a non-negative whole number.");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("workouts")
+            .insert({
+                exercise_type: exerciseType,
+                duration: durationValue,
+                calories: caloriesValue,
+                step_count: stepsValue,
+                user_id: user.uid
+            });
+
+        if (error) {
+            console.error("Error saving exercise:", error);
+            alert("Unable to save exercise.");
+            return;
+        }
+
+        alert("Exercise saved!");
+
+        setDuration("");
+        setCaloriesBurned("");
+        setStepCount("");
     };
-    const saveFood = () => {
-        const data = {
-            meal: mealType,
-            calories: calorieCount,
-        };
 
-        console.log("Food saved:", data); // Need to replace with api save
+    const saveFood = async () => {
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("You must be logged in to save food information.");
+            return;
+        }
+
+        // At least one nutrition field must contain something
+        const hasAnyValue =
+            calorieCount !== "" ||
+            carbs !== "" ||
+            protein !== "" ||
+            fat !== "" ||
+            water !== "";
+
+        if (!hasAnyValue) {
+            alert("Please enter at least one nutrition value.");
+            return;
+        }
+
+        const caloriesValue =
+            calorieCount === "" ? 0 : Number(calorieCount);
+
+        const carbsValue =
+            carbs === "" ? 0 : Number(carbs);
+
+        const proteinValue =
+            protein === "" ? 0 : Number(protein);
+
+        const fatValue =
+            fat === "" ? 0 : Number(fat);
+
+        const waterValue =
+            water === "" ? 0 : Number(water);
+
+        const values = [
+            caloriesValue,
+            carbsValue,
+            proteinValue,
+            fatValue,
+            waterValue
+        ];
+
+        if (
+            values.some(
+                value =>
+                    !Number.isFinite(value) ||
+                    value < 0
+            )
+        ) {
+            alert("Nutrition values must be valid non-negative numbers.");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("nutrition_stats")
+            .insert({
+                user_id: user.uid,
+                meal_type: mealType,
+
+                calories: caloriesValue,
+                carbs: carbsValue,
+                protein: proteinValue,
+                fat: fatValue,
+                water: waterValue,
+
+                // These aren't being logged by the Food tab
+                steps: 0,
+
+                // nutrition_stats.date has NO default
+                date: new Date().toISOString()
+            });
+
+        if (error) {
+            console.error("Error saving food:", error);
+            alert("Unable to save nutrition information.");
+            return;
+        }
+
+        alert("Nutrition information saved!");
+
+        setCalorieCount("");
+        setCarbs("");
+        setProtein("");
+        setFat("");
+        setWater("");
+        setMealType("Breakfast");
     };
 
-    const saveWeight = () => {
-        const data = {
-            weight,
-        };
+    const saveWeight = async () => {
+        const user = auth.currentUser;
 
-        console.log("Weight saved:", data); // Need to replace with api save
+        if (!user) {
+            alert("You must be logged in to save your weight.");
+            return;
+        }
+
+        if (weight === "") {
+            alert("Please enter your weight.");
+            return;
+        }
+
+        const weightValue = Number(weight);
+
+        if (
+            !Number.isFinite(weightValue) ||
+            weightValue <= 0
+        ) {
+            alert("Please enter a valid weight.");
+            return;
+        }
+
+        const { error } = await supabase
+            .from("nutrition_stats")
+            .insert({
+                user_id: user.uid,
+                weight: weightValue,
+                calories: 0,
+                steps: 0,
+                water: 0,
+                protein: 0,
+                carbs: 0,
+                fat: 0,
+                date: new Date().toISOString()
+            });
+
+        if (error) {
+            console.error("Error saving weight:", error);
+            alert("Unable to save weight.");
+            return;
+        }
+
+        alert("Weight saved!");
+        setWeight("");
     };
 
     const [exerciseTypes, setExerciseTypes] = useState([]);
@@ -134,6 +330,17 @@ const DataInput = () => {
                                 </div>
 
                                 <div className="formRow">
+                                    <label>Calories Burned</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        placeholder="kcal"
+                                        value={caloriesBurned}
+                                        onChange={(e) => setCaloriesBurned(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="formRow">
                                     <label>Step Count</label>
 
                                     <input
@@ -170,6 +377,54 @@ const DataInput = () => {
                                         placeholder="Obtain from MyFitnessPal"
                                         value={calorieCount}
                                         onChange={(e) => setCalorieCount(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="formRow">
+                                    <label>Carbohydrates</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="grams"
+                                        value={carbs}
+                                        onChange={(e) => setCarbs(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="formRow">
+                                    <label>Protein</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="grams"
+                                        value={protein}
+                                        onChange={(e) => setProtein(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="formRow">
+                                    <label>Fat</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="grams"
+                                        value={fat}
+                                        onChange={(e) => setFat(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="formRow">
+                                    <label>Water</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        placeholder="litres"
+                                        value={water}
+                                        onChange={(e) => setWater(e.target.value)}
                                     />
                                 </div>
 

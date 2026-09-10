@@ -6,6 +6,12 @@
   font-family: 'Hammersmith One', sans-serif;
 }
 
+.summaryCaption {
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 4px;
+}
+
 .fc-daygrid-day-number {
     padding-left: 28px;
 }

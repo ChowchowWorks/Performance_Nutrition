@@ -185,3 +185,16 @@
     grid-template-columns: 1fr;
   }
 }
+
+.newMemberHeader h2 {
+    margin: 0;
+    color: #08204d;
+    font-size: 1.6rem;
+}
+
+.newMemberSubtitle {
+    margin: 8px 0 4px;
+    color: #6b7280;
+    font-size: 1rem;
+    line-height: 1.5;
+}
