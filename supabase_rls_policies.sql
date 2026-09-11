@@ -3,6 +3,9 @@
     -- Supabase must be configured to accept Firebase as a third-party JWT provider
     -- so auth.uid() resolves to the logged-in Firebase UID.
 
+    -- Required by the Python chatbot's Supabase-backed vector store.
+    create extension if not exists vector with schema extensions;
+
     alter table public.nutrition_stats enable row level security;
     alter table public.workouts enable row level security;
     alter table public.nutrition_goals enable row level security;
