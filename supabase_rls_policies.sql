@@ -4,6 +4,9 @@ alter table public.nutrition_stats enable row level security;
 alter table public.workouts enable row level security;
 alter table public.nutrition_goals enable row level security;
 
+-- Required by the Python chatbot's Supabase-backed vector store.
+create extension if not exists vector with schema extensions;
+
 drop policy if exists "Users can read own nutrition stats"
 on public.nutrition_stats;
 
