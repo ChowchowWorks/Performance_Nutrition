@@ -98,6 +98,17 @@
   outline: none;
 }
 
+.formRow input[type="number"] {
+  appearance: auto;
+  -moz-appearance: number-input;
+}
+
+.formRow input[type="number"]::-webkit-inner-spin-button,
+.formRow input[type="number"]::-webkit-outer-spin-button {
+  appearance: auto;
+  opacity: 1;
+}
+
 .formRow input:focus,
 .formRow select:focus {
   border-color: #e2834b;

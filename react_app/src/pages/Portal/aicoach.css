@@ -95,7 +95,7 @@
 
 .inputBar {
   position: relative;
-  z-index: 1;
+  z-index: 1000;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -110,7 +110,7 @@
 
 .chatInput {
   position: relative;
-  z-index: 2;
+  z-index: 1001;
   flex: 1;
   width: 100%;
   color: #333;

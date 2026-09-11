@@ -187,6 +187,8 @@ const Coach = () => {
           <input
             className="chatInput"
             type="text"
+            autoFocus
+            tabIndex="0"
             autoComplete="off"
             placeholder="Ask your coach a question..."
             value={message}

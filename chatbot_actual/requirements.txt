@@ -3,7 +3,6 @@ langchain-community
 langchainhub
 langchain-openai
 langchain-chroma
-langchain-postgres
 tiktoken
 sentence-transformers
 pypdf
