@@ -10,3 +10,5 @@ __pycache__/
 # Node dependencies and build output
 node_modules/
 dist/
+
+.DS_Store
