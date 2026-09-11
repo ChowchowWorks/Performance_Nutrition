@@ -342,7 +342,8 @@
 }
 
 .formRow input,
-.formRow select {
+.formRow select,
+.formRow textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
@@ -355,7 +356,8 @@
 }
 
 .formRow input:focus,
-.formRow select:focus {
+.formRow select:focus,
+.formRow textarea:focus {
   outline: none;
   border-color: rgba(226, 131, 75, 0.45);
   box-shadow: 0 0 0 3px rgba(226, 131, 75, 0.16);
@@ -482,4 +484,8 @@
 .detailRow textarea {
   resize: vertical;
   min-height: 56px;
+}
+
+.formRow textarea {
+  resize: vertical;
 }
