@@ -10,6 +10,7 @@ import WorkoutCarousel from "../../components/WorkoutCarousel";
 import WorkoutChart from "../../components/WorkoutChart";
 
 import { supabase } from "../../supabase.js";
+import { auth } from "../../firebase.js";
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("stats");
@@ -224,6 +225,11 @@ const Dashboard = () => {
     // Calorie, Protein, Carb, Fat, Weight, Step, Water Goals
     useEffect(() => {
         const getGoals = async () => {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return;
+            }
 
             const { data, error } = await supabase
             .from("nutrition_goals")
@@ -236,6 +242,7 @@ const Dashboard = () => {
                 step_goal,
                 water_goal
                 `)
+            .eq("user_id", user.uid)
             .maybeSingle();
 
             if (error) {

@@ -15,6 +15,8 @@ const initialForm = {
   totalVacancy: '',
   googleFormLink: '',
   thumbnailLink: '',
+  packingList: '',
+  description: '',
 };
 
 const formatDuration = (duration) => {
@@ -61,8 +63,10 @@ const mapEventToFormData = (event) => ({
   eventLocation: event.location ?? '',
   difficulty: event.difficulty || eventDifficultyOptions[0],
   totalVacancy: event.spaces !== undefined && event.spaces !== null ? String(event.spaces) : '',
-  googleFormLink: event.googleFormLink ?? '',
+  googleFormLink: event.register ?? '',
   thumbnailLink: event.link ?? '',
+  packingList: event.packingList ?? '',
+  description: event.description ?? '',
 });
 
 const buildEventPayload = (eventData) => ({
@@ -72,8 +76,10 @@ const buildEventPayload = (eventData) => ({
   location: eventData.eventLocation.trim(),
   difficulty: eventData.difficulty,
   spaces: Number(eventData.totalVacancy),
-  googleFormLink: eventData.googleFormLink.trim(),
+  register: eventData.googleFormLink.trim(),
   link: eventData.thumbnailLink.trim(),
+  packingList: eventData.packingList.trim(),
+  description: eventData.description.trim(),
 });
 
 export default function AdminEvents() {
@@ -209,11 +215,39 @@ export default function AdminEvents() {
       editingFormData.totalVacancy,
       editingFormData.googleFormLink,
       editingFormData.thumbnailLink,
+      editingFormData.packingList,
+      editingFormData.description,
     ];
 
     if (requiredFields.some((field) => !String(field).trim())) {
       setSavedMessage('Please complete all fields before saving the event.');
       return;
+    }
+
+    // checks if duration and vacancy are properly numeric
+    const durationValue = Number(editingFormData.eventDuration);
+    const vacancyValue = Number(editingFormData.totalVacancy);
+
+    if (
+        !Number.isFinite(durationValue) ||
+        !Number.isInteger(durationValue) ||
+        durationValue <= 0
+    ) {
+        setSavedMessage(
+            'Event duration must be a positive whole number.'
+        );
+        return;
+    }
+
+    if (
+        !Number.isFinite(vacancyValue) ||
+        !Number.isInteger(vacancyValue) ||
+        vacancyValue <= 0
+    ) {
+        setSavedMessage(
+            'Total vacancy must be a positive whole number.'
+        );
+        return;
     }
 
     setIsSaving(true);
@@ -272,6 +306,8 @@ export default function AdminEvents() {
       formData.totalVacancy,
       formData.googleFormLink,
       formData.thumbnailLink,
+      formData.packingList,
+      formData.description,
     ];
 
     if (requiredFields.some((field) => !field.trim())) {
@@ -289,8 +325,10 @@ export default function AdminEvents() {
         location: formData.eventLocation.trim(),
         difficulty: formData.difficulty,
         spaces: Number(formData.totalVacancy),
-        googleFormLink: formData.googleFormLink.trim(),
+        register: formData.googleFormLink.trim(),
         link: formData.thumbnailLink.trim(),
+        packingList: formData.packingList.trim(),
+        description: formData.description.trim(),
       });
 
       setSavedMessage('Event saved successfully and added to the member Events page.');
@@ -415,14 +453,14 @@ export default function AdminEvents() {
               <div className="formRow">
                 <label htmlFor="googleFormLink">Google Form Link</label>
                 <input
-                  id="googleFormLink"
-                  name="googleFormLink"
-                  type="url"
-                  value={formData.googleFormLink}
-                  onChange={handleChange}
-                  placeholder="Paste Google Form link"
+                    id="googleFormLink"
+                    name="googleFormLink"
+                    type="url"
+                    value={formData.googleFormLink}
+                    onChange={handleChange}
+                    placeholder="Paste Google Form link"
                 />
-              </div>
+            </div>
             </div>
 
             <div className="formRow">
@@ -434,6 +472,30 @@ export default function AdminEvents() {
                 value={formData.thumbnailLink}
                 onChange={handleChange}
                 placeholder="Paste image URL for the event thumbnail"
+              />
+            </div>
+
+            <div className="formRow">
+              <label htmlFor="packingList">Packing List</label>
+              <textarea
+                id="packingList"
+                name="packingList"
+                value={formData.packingList}
+                onChange={handleChange}
+                placeholder="e.g. Running shoes, water bottle, towel"
+                rows="3"
+              />
+            </div>
+
+            <div className="formRow">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter a short description of the event"
+                rows="5"
               />
             </div>
 
@@ -626,6 +688,32 @@ export default function AdminEvents() {
                                   onChange={handleEditFieldChange}
                                 />
                               </div>
+
+                              <div className="detailRow linkRow">
+                                <label htmlFor={`edit-packingList-${event.id}`}>
+                                  Packing List
+                                </label>
+                                <textarea
+                                  id={`edit-packingList-${event.id}`}
+                                  name="packingList"
+                                  value={editingFormData.packingList}
+                                  onChange={handleEditFieldChange}
+                                  rows="3"
+                                />
+                              </div>
+
+                              <div className="detailRow linkRow">
+                                <label htmlFor={`edit-description-${event.id}`}>
+                                  Description
+                                </label>
+                                <textarea
+                                  id={`edit-description-${event.id}`}
+                                  name="description"
+                                  value={editingFormData.description}
+                                  onChange={handleEditFieldChange}
+                                  rows="5"
+                                />
+                              </div>
                             </div>
 
                             <div className="currentEventEditActions">
@@ -669,14 +757,28 @@ export default function AdminEvents() {
                                 <strong>{event.spaces ?? 'Not set'}</strong>
                               </div>
                               <div className="detailRow linkRow">
-                                <span>Google Form Link</span>
-                                {event.googleFormLink ? (
-                                  <a href={event.googleFormLink} target="_blank" rel="noreferrer">
-                                    Open Google Form
-                                  </a>
-                                ) : (
-                                  <strong>Not set</strong>
-                                )}
+                                  <span>Google Form Link</span>
+
+                                  {event.register ? (
+                                      <a
+                                          href={event.register}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                      >
+                                          Open Google Form
+                                      </a>
+                                  ) : (
+                                      <strong>Not set</strong>
+                                  )}
+                              </div>
+                              <div className="detailRow">
+                                <span>Packing List</span>
+                                <strong>{event.packingList || 'Not set'}</strong>
+                              </div>
+
+                              <div className="detailRow">
+                                <span>Description</span>
+                                <strong>{event.description || 'Not set'}</strong>
                               </div>
                             </div>
                           </>

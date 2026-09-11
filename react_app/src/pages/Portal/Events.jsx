@@ -78,7 +78,22 @@ const Events = () => {
                         <h3> 🎒 <span style = {{ fontWeight: 'bold'}}> Packing List: </span> {event.packingList} </h3>
                         <p> {event.description} </p>
 
-                        <button className = "registerButton"> Register Interest </button>
+                        <button
+                            className="registerButton"
+                            onClick={() => {
+                                if (event.register) {
+                                    window.open(
+                                        event.register,
+                                        "_blank",
+                                        "noopener,noreferrer"
+                                    );
+                                } else {
+                                    alert("Registration link is not available for this event.");
+                                }
+                            }}
+                        >
+                            Register Interest
+                        </button>
                     </div>
                 ))}
             </div>
