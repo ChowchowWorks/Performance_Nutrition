@@ -278,7 +278,8 @@
 }
 
 .detailRow input,
-.detailRow select {
+.detailRow select,
+.detailRow textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
@@ -291,7 +292,8 @@
 }
 
 .detailRow input:focus,
-.detailRow select:focus {
+.detailRow select:focus
+.detailRow textarea:focus {
   outline: none;
   border-color: rgba(226, 131, 75, 0.45);
   box-shadow: 0 0 0 3px rgba(226, 131, 75, 0.16);
@@ -475,4 +477,9 @@
   .eventDetailsGrid {
     grid-template-columns: 1fr;
   }
+}
+
+.detailRow textarea {
+  resize: vertical;
+  min-height: 56px;
 }
