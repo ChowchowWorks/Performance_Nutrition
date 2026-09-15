@@ -1,8 +1,9 @@
 from chatbot_actual.llm import *
 from chatbot_actual.indexing import *
+from chatbot_actual.loader import receive
 
 def retrieve_documents(vectorstore, query, k=5):
-    return vectorstore.similarity_search_with_score(query, k=k)
+    return vectorstore.similarity_search_with_relevance_scores(query, k=k)
 
 def get_chat_summary(history):
   print("--- Received Chat History!--- \n Chat History Length:", len(history))
@@ -87,7 +88,7 @@ def retrieval(vectorstore,question, retries): # retrieve and evaluate retrieved 
   print(f"Retrieval Retry Number: {retries}")
   try:
     context = retrieve_documents(vectorstore, question)
-    filtered_context = [(doc, score) for doc, score in context if score <= 0.4]
+    filtered_context = [(doc, score) for doc, score in context if score >= 0.6]
     page_contents = [doc.page_content for doc, score in filtered_context]
   except Exception as e:
     print("---Error: Retriever failed to retrieve documents---")

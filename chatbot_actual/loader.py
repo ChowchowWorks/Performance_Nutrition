@@ -2,7 +2,7 @@ import os
 from chatbot_actual.config import *
 from google.cloud import storage
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def load(file: str):
     if os.path.isdir(file):
@@ -53,6 +53,8 @@ def receive(file:str):
     texts = split(documents)
     if texts == None:
         raise Exception("---Error: Document splitting failed---")
+    for document in texts:
+        document.page_content = document.page_content.replace("\x00", "")
     return texts
 
 def check_pdfs(filename):

@@ -2,7 +2,9 @@ langchain
 langchain-community
 langchainhub
 langchain-openai
+langchain-text-splitters
 langchain-chroma
+supabase
 tiktoken
 sentence-transformers
 pypdf

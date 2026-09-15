@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_openai import ChatOpenAI
+from chatbot_actual.indexing import get_vector_store
 import json
 import traceback
 from statistics import mean
@@ -63,6 +64,20 @@ def build_user_context(user_data):
         "recent_nutrition": nutrition[:30]
     }
 
+
+def retrieve_knowledge_context(question, limit=5):
+    vectorstore = get_vector_store()
+    if vectorstore is None:
+        raise RuntimeError("Supabase vector store is unavailable")
+
+    matches = vectorstore.similarity_search_with_relevance_scores(question, k=limit)
+    relevant_matches = [
+        document.page_content
+        for document, score in matches
+        if score >= 0.6
+    ]
+    return "\n\n---\n\n".join(relevant_matches)
+
 @app.post("/ask")
 def main(request:QueryRequest):
     if llm is None:
@@ -74,6 +89,7 @@ def main(request:QueryRequest):
     try:
         compact_context = build_user_context(request.user_data)
         recent_history = request.history[-12:]
+        knowledge_context = retrieve_knowledge_context(request.question)
 
         response = llm.invoke([
             {
@@ -81,6 +97,8 @@ def main(request:QueryRequest):
                 "content": (
                     "You are a personal performance nutrition coach. "
                     "Answer using the user's logged data when relevant. "
+                    "Use the provided knowledge-base context for nutrition and training facts. "
+                    "Do not claim the knowledge base says something it does not say. "
                     "Be clear about trends and calculations, and do not invent records. "
                     "If there is not enough data, say what is missing. "
                     "The user data is private context for this request."
@@ -91,6 +109,7 @@ def main(request:QueryRequest):
                 "role": "user",
                 "content": (
                     f"User logged data:\n{json.dumps(compact_context, default=str)}\n\n"
+                    f"Knowledge-base context:\n{knowledge_context or 'No relevant knowledge-base context found.'}\n\n"
                     f"Question: {request.question}"
                 )
             }
@@ -102,4 +121,3 @@ def main(request:QueryRequest):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"AI Coach failure: {e}")
-    
