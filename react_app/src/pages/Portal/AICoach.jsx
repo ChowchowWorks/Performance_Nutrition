@@ -104,7 +104,7 @@ const Coach = () => {
     try {
         const userData = await getUserData(user.uid);
         const response = await fetch(
-          import.meta.env.VITE_CHATBOT_API_URL || "http://localhost:8000/ask",
+          import.meta.env.VITE_CHATBOT_API_URL || "https://pn-portal-chatbot.onrender.com/ask",
           {
         method: "POST",
         headers: { "Content-Type": "application/json" },
