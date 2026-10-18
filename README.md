@@ -32,7 +32,7 @@ To authenticate a newly registered user, follow these steps:
 2. **Obtain the user's Firebase UID**
    - Open the [Firebase Console](https://console.firebase.google.com/).
    - Select the `performance_nutrition` project.
-   - Click the menu icon (☰) in the top-left corner.
+   - Select the right arrow (>) on the bottom-left of the webpage to open the menu.
    - Navigate to **Authentication**.
    - Under the **Users** tab, locate the newly registered user.
    - Copy their **User UID** from the last column.
