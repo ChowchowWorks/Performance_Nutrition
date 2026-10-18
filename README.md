@@ -19,8 +19,7 @@ The Performance Nutrition web application is deployed and hosted on Firebase Hos
 
 After creating an account, users must be assigned the appropriate authentication role before they can access the tracking functions in Performance Nutrition.
 
-To authenticate a newly registered user, follow these ste<img width="1920" height="1080" alt="3" src="https://github.com/user-attachments/assets/9dfc6407-9906-485b-a713-471c70c96751" />
-ps:
+To authenticate a newly registered user, follow these steps:
 
 1. **Locate the authentication script**
    - Place the `setRole.js` script inside the `react_app` folder:
